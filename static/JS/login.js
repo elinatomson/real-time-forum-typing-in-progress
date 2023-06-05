@@ -15,11 +15,11 @@ document.addEventListener('DOMContentLoaded', function() {
         <form id="login-form">                
             <p class="align">
                 <label for="nickname">Nickname</label>
-                <input class="input" type="text" placeholder="" name="nickname">
+                <input id="nickname" class="input" type="text" placeholder="" name="nickname">
             </p>
             <p class="align">
                 <label for="password">Password</label>
-                <input class="input" type="password" placeholder="" name="password">
+                <input id="password" class="input" type="password" placeholder="" name="password">
             </p>
             <p class="align">
                 <input class="buttons" type="submit" value="Login">
@@ -37,16 +37,16 @@ document.addEventListener('DOMContentLoaded', function() {
             var nickname = document.getElementById('nickname').value;
             var password = document.getElementById('password').value;
 
-            //validations will be here
+            //validations will come here
 
             submitLogInForm(nickname, password);
         });
     }
   
     function submitLogInForm(nickname, password) {
-        //necessary actions will be here
-
-        window.location.href = '/static/index.html'; //THIS HAS TO BE CHANGED LATER
-    }
-  });
+        //necessary actions will come here
+  
+            window.location.href = '/';
+        }
+    });
   

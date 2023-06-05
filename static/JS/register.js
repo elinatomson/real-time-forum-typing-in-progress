@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var formContainer = document.getElementById('formContainer');
     formContainer.innerHTML = '';
 
-    var formContent = `
+    formContainer.innerHTML = `
       <div class="heading">Please fill out all the fields below</div>
       <form id="registration-form">
         <p class="align">
@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', function() {
         <p class="align">
           <label for="gender">Gender:</label>
           <select class="input" id="gender" name="gender" required>
-          <option class="input" value="">-- Select --</option>
+          <option class="input" value="">Select</option>
           <option class="input" value="male">Male</option>
           <option class="input" value="female">Female</option>
           <option class="input" value="other">Other</option>
@@ -32,27 +32,25 @@ document.addEventListener('DOMContentLoaded', function() {
         </p>
         <p class="align">
           <label for="firstName">First Name:</label>
-          <input class="input" type="text" id="firstName" name="firstName" required><br><br>
+          <input class="input" type="text" id="firstName" name="firstName" required>
         </p>
         <p class="align">
           <label for="lastName">Last Name:</label>
-          <input class="input" type="text" id="lastName" name="lastName" required><br><br>
+          <input class="input" type="text" id="lastName" name="lastName" required>
         </p>
         <p class="align">
           <label for="email">E-mail:</label>
-          <input class="input" type="email" id="email" name="email" required><br><br>
+          <input class="input" type="email" id="email" name="email" required>
         </p>
         <p class="align">
           <label for="password">Password:</label>
-          <input class="input" type="password" id="password" name="password" required><br><br>
+          <input class="input" type="password" id="password" name="password" required>
         </p>
         <p class="align">
           <input class="buttons" type="submit" value="Register">
         </p>
       </form>
     `;
-
-    formContainer.innerHTML = formContent;
 
     var registrationForm = document.getElementById('registration-form');
 
@@ -67,15 +65,27 @@ document.addEventListener('DOMContentLoaded', function() {
       var email = document.getElementById('email').value;
       var password = document.getElementById('password').value;
 
-      //validations will be here
+      //validations will come here
 
       submitRegistrationForm(nickname, age, gender, firstName, lastName, email, password);
     });
   }
 
   function submitRegistrationForm(nickname, age, gender, firstName, lastName, email, password) {
-    //necessary actions will be here
+    //necessary actions will come here
 
-    window.location.href = '/static/index.html'; //THIS HAS TO BE CHANGED LATER
+    var formContainer = document.getElementById('formContainer');
+    formContainer.innerHTML = `
+      <div class="heading">Congrats, your account has been successfully created!</div>
+      <p class="align">
+        <a class="buttons" id="login-button2">Click here to log in</a>
+      </p>
+    `;
+    //button not working at the moment
+    var logIn2 = document.getElementById('login-button2');
+    logIn2.addEventListener('click', function(event) {
+      event.preventDefault();
+      showLogInForm();
+    });
   }
 });
