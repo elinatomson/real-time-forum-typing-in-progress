@@ -11,46 +11,51 @@ document.addEventListener('DOMContentLoaded', function() {
     formContainer.innerHTML = '';
 
     formContainer.innerHTML = `
-      <div class="heading">Please fill out all the fields below</div>
-      <form id="registration-form">
-        <p class="align">
-          <label for="nickname">Nickname:</label>
-          <input class="input" type="text" id="nickname" name="nickname" required>
-        </p>
-        <p class="align">
-          <label for="age">Age:</label>
-          <input class="input" type="number" id="age" name="age" required>
-        </p>
-        <p class="align">
-          <label for="gender">Gender:</label>
-          <select class="input" id="gender" name="gender" required>
+    <div class="heading">Please fill out all the fields below</div>
+    <div class="content">Username and password have to be 5 letters long!</div>
+    <form id="registration-form">
+      <p class="align">
+        <label for="nickname">Nickname:</label>
+        <input class="input" type="text" id="nickname" name="nickname" required>
+      </p>
+      <p class="align">
+        <label for="age">Age:</label>
+        <input class="input" type="number" id="age" name="age" required>
+      </p>
+      <p class="align">
+        <label for="gender">Gender:</label>
+        <select class="input" id="gender" name="gender" required>
           <option class="input" value="">Select</option>
           <option class="input" value="male">Male</option>
           <option class="input" value="female">Female</option>
           <option class="input" value="other">Other</option>
-          </select>
-        </p>
-        <p class="align">
-          <label for="firstName">First Name:</label>
-          <input class="input" type="text" id="firstName" name="firstName" required>
-        </p>
-        <p class="align">
-          <label for="lastName">Last Name:</label>
-          <input class="input" type="text" id="lastName" name="lastName" required>
-        </p>
-        <p class="align">
-          <label for="email">E-mail:</label>
-          <input class="input" type="email" id="email" name="email" required>
-        </p>
-        <p class="align">
-          <label for="password">Password:</label>
-          <input class="input" type="password" id="password" name="password" required>
-        </p>
-        <p class="align">
-          <input class="buttons" type="submit" value="Register">
-        </p>
-      </form>
-    `;
+        </select>
+      </p>
+      <p class="align">
+        <label for="firstName">First Name:</label>
+        <input class="input" type="text" id="firstName" name="firstName" required>
+      </p>
+      <p class="align">
+        <label for="lastName">Last Name:</label>
+        <input class="input" type="text" id="lastName" name="lastName" required>
+      </p>
+      <p class="align">
+        <label for="email">E-mail:</label>
+        <input class="input" type="email" id="email" name="email" required>
+      </p>
+      <p class="align">
+        <label for="password">Password:</label>
+        <input class="input" type="password" id="password" name="password" required>
+      </p>
+      <p class="align">
+        <label for="password-repeat">Repeat Password:</label>
+        <input class="input" type="password" id="password-repeat" name="password-repeat" required>
+      </p>
+      <p class="align">
+        <input class="buttons" type="submit" value="Register">
+      </p>
+    </form>
+  `;
 
     var registrationForm = document.getElementById('registration-form');
 
@@ -64,28 +69,90 @@ document.addEventListener('DOMContentLoaded', function() {
       var lastName = document.getElementById('lastName').value;
       var email = document.getElementById('email').value;
       var password = document.getElementById('password').value;
+      var password_repeat = document.getElementById('password-repeat').value;
 
-      //validations will come here
-
-      submitRegistrationForm(nickname, age, gender, firstName, lastName, email, password);
+      submitRegistrationForm(nickname, age, gender, firstName, lastName, email, password, password_repeat);
     });
   }
 
-  function submitRegistrationForm(nickname, age, gender, firstName, lastName, email, password) {
-    //necessary actions will come here
+  function submitRegistrationForm(nickname, age, gender, firstName, lastName, email, password, password_repeat) {
+    //validations
+    var nameLength = nickname.length >= 5 && nickname.length <= 50;
+    var passwordLength = password.length >= 5 && password.length <= 50;
+    var passwordMatch = password === password_repeat;
 
-    var formContainer = document.getElementById('formContainer');
-    formContainer.innerHTML = `
-      <div class="heading">Congrats, your account has been successfully created!</div>
-      <p class="align">
-        <a class="buttons" id="login-button2">Click here to log in</a>
-      </p>
-    `;
-    //button not working at the moment
-    var logIn2 = document.getElementById('login-button2');
-    logIn2.addEventListener('click', function(event) {
-      event.preventDefault();
-      showLogInForm();
-    });
+    if (!nameLength || !passwordLength) {
+      var formContainer = document.getElementById('formContainer');
+      var errorMessage = document.createElement('div');
+      errorMessage.className = 'message';
+      errorMessage.textContent = 'Please check username and password criteria!';
+      formContainer.appendChild(errorMessage);
+      return;
+    }
+
+    if (!passwordMatch) {
+      var formContainer = document.getElementById('formContainer');
+      var errorMessage = document.createElement('div');
+      errorMessage.className = 'message';
+      errorMessage.textContent = 'Inserted passwords are not the same!';
+      formContainer.appendChild(errorMessage);
+      return;
+    }
+
+    //validation passed, send user data to the server
+    var userData = {
+      nickname: nickname,
+      age: age,
+      gender: gender,
+      firstName: firstName,
+      lastName: lastName,
+      email: email,
+      password: password
+    };
+    sendPlayerData(userData);
+  }
+
+  function sendPlayerData(userData) {
+    fetch('http://localhost:8080/register', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(userData)
+    })
+      .then(response => {
+        if (response.ok) {
+          var formContainer = document.getElementById('formContainer');
+          formContainer.innerHTML = `
+            <div class="heading">Congrats, your account has been successfully created!</div>
+            <p class="align">
+              <a class="buttons" id="login-button2">Click here to log in</a>
+            </p>
+          `;
+          var logIn2 = document.getElementById('login-button2');
+          logIn2.addEventListener('click', function(event) {
+            event.preventDefault();
+            showLogInForm();
+          });
+        } else {
+          return response.text(); //reading response as text
+        }
+      })
+      .then(data => {
+        var formContainer = document.getElementById('formContainer');
+        if (data) {
+          var errorMessage = document.createElement('div');
+          errorMessage.className = 'message';
+          errorMessage.textContent = 'An error occurred while creating your account: ' + data;
+          formContainer.appendChild(errorMessage);
+        }
+      })
+      .catch(error => {
+        var formContainer = document.getElementById('formContainer');
+        var errorMessage = document.createElement('div');
+        errorMessage.className = 'message';
+        errorMessage.textContent = 'An error occurred while creating your account: ' + error.message;
+        formContainer.appendChild(errorMessage);
+      });
   }
 });
