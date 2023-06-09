@@ -1,6 +1,7 @@
 package main
 
 import (
+	"database/sql"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -50,23 +51,18 @@ func addUserData(w http.ResponseWriter, r *http.Request) {
 
 func insertUserData(userData UserData) error {
 	//checking if nickname or email already exists
-	var count int
-	err1 := db.QueryRow("SELECT COUNT(*) FROM users WHERE nickname = ? ", userData.Nickname).Scan(&count)
-	if err1 != nil {
-		return err1
-	}
 
-	if count > 0 {
-		return errors.New("Nickname already taken")
-	}
-
-	err2 := db.QueryRow("SELECT COUNT(*) FROM users WHERE email = ?", userData.Email).Scan(&count)
-	if err2 != nil {
-		return err2
-	}
-
-	if count > 0 {
+	stmt := `SELECT email FROM users WHERE email = ?`
+	row := db.QueryRow(stmt, userData.Email)
+	err := row.Scan(&userData.Email)
+	if err != sql.ErrNoRows {
 		return errors.New("Email already taken")
+	}
+	stmt1 := `SELECT nickname FROM users WHERE nickname = ?`
+	row1 := db.QueryRow(stmt1, userData.Nickname)
+	err1 := row1.Scan(&userData.Nickname)
+	if err1 != sql.ErrNoRows {
+		return errors.New("Nickname already taken")
 	}
 
 	//hashing password

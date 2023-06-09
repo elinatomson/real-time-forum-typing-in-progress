@@ -57,9 +57,55 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   
     function submitNewPostForm(title, content, movies, serials, realityshows) {
-        //necessary actions will come here
-  
-            window.location.href = '/';
+        var postData = {
+            title: title,
+            content: content,
+        };
+        //checking if a category is selected and add it to the postData object
+        if (document.getElementById('movies').checked) {
+            postData.movies = document.getElementById('movies').value;
         }
-    });
-  
+        if (document.getElementById('serials').checked) {
+            postData.serials = document.getElementById('serials').value;
+        }
+        if (document.getElementById('realityshows').checked) {
+            postData.realityshows = document.getElementById('realityshows').value;
+        }
+
+        sendPostData(postData)
+    }
+
+
+    function sendPostData (postData) {
+        fetch('/create-post', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(postData)
+        })
+        .then(response => {
+            if (response.ok) {
+                window.location.href = '/';
+            } else {
+                return response.text(); //reading response as text
+            }
+        })
+        .then(data => {
+            var formContainer = document.getElementById('formContainer');
+            if (data) {
+            var errorMessage = document.createElement('div');
+            errorMessage.className = 'message';
+            errorMessage.textContent = 'An error occurred while creating post: ' + data;
+            formContainer.appendChild(errorMessage);
+            }
+        })
+        .catch(error => {
+            var formContainer = document.getElementById('formContainer');
+            var errorMessage = document.createElement('div');
+            errorMessage.className = 'message';
+            errorMessage.textContent = 'An error occurred while creating post: ' + error.message;
+            formContainer.appendChild(errorMessage);
+        });
+    }
+});

@@ -39,6 +39,15 @@
     cursor: pointer;
 }
 
+.heading2 {
+    text-align: center;
+    align-items: center;
+    font-size: 40px;
+    color: white;
+    text-decoration: none;
+    cursor: pointer;
+}
+
 .name {
     font-size: 40px;
     margin-left: 1%;

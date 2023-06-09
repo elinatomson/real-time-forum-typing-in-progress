@@ -7,6 +7,38 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   
     function loggingOut() {
+        fetch('http://localhost:8080/logout', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => {
+            if (response.ok) {
+                showLoggedOutMessage();
+            } else {
+                return response.text(); //reading response as text
+            }
+        })
+        .then(errorMessage => {
+            if (errorMessage) {
+              var formContainer = document.getElementById('formContainer');
+              var errorContainer = document.createElement('div');
+              errorContainer.className = 'message';
+              errorContainer.textContent = errorMessage;
+              formContainer.appendChild(errorContainer);
+            }
+        })
+          .catch(error => {
+            var formContainer = document.getElementById('formContainer');
+            var errorContainer = document.createElement('div');
+            errorContainer.className = 'message';
+            errorContainer.textContent = 'An error occurred while logging out: ' + error.message;
+            formContainer.appendChild(errorContainer);
+        });
+    }
+  
+    function showLoggedOutMessage() {
         var formContainer = document.getElementById('formContainer');
         formContainer.innerHTML = '';
 
@@ -28,5 +60,12 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+
+
+
+
+
+
+
 
   

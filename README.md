@@ -4,7 +4,6 @@
 Type in your terminal: go run main.go
 In the Windows Security alert cklick "Allow access"
 Open http://localhost:8080
-Play the game
 To stop the server, click Ctrl + C in your terminal
 
 ## For auditing
