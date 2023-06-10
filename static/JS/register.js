@@ -8,7 +8,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
   function showRegistrationForm() {
     var formContainer = document.getElementById('formContainer');
-    formContainer.innerHTML = '';
 
     formContainer.innerHTML = `
     <div class="heading">Please fill out all the fields below</div>
@@ -109,10 +108,10 @@ document.addEventListener('DOMContentLoaded', function() {
       email: email,
       password: password
     };
-    sendPlayerData(userData);
+    sendUserData(userData);
   }
 
-  function sendPlayerData(userData) {
+  function sendUserData(userData) {
     fetch('http://localhost:8080/register', {
       method: 'POST',
       headers: {
@@ -120,39 +119,28 @@ document.addEventListener('DOMContentLoaded', function() {
       },
       body: JSON.stringify(userData)
     })
-      .then(response => {
-        if (response.ok) {
+    .then(response => {
+      if (response.ok) {
+        showLogInForm(); //direct the user to log in
+      } else {
+        return response.text(); //reading response as text
+      }
+    })
+    .then(errorMessage => {
+      if (errorMessage) {
           var formContainer = document.getElementById('formContainer');
-          formContainer.innerHTML = `
-            <div class="heading">Congrats, your account has been successfully created!</div>
-            <p class="align">
-              <a class="buttons" id="login-button2">Click here to log in</a>
-            </p>
-          `;
-          var logIn2 = document.getElementById('login-button2');
-          logIn2.addEventListener('click', function(event) {
-            event.preventDefault();
-            showLogInForm();
-          });
-        } else {
-          return response.text(); //reading response as text
-        }
-      })
-      .then(data => {
-        var formContainer = document.getElementById('formContainer');
-        if (data) {
-          var errorMessage = document.createElement('div');
-          errorMessage.className = 'message';
-          errorMessage.textContent = 'An error occurred while creating your account: ' + data;
-          formContainer.appendChild(errorMessage);
-        }
-      })
-      .catch(error => {
-        var formContainer = document.getElementById('formContainer');
-        var errorMessage = document.createElement('div');
-        errorMessage.className = 'message';
-        errorMessage.textContent = 'An error occurred while creating your account: ' + error.message;
-        formContainer.appendChild(errorMessage);
-      });
+          var errorContainer = document.createElement('div');
+          errorContainer.className = 'message';
+          errorContainer.textContent = errorMessage;
+          formContainer.appendChild(errorContainer);
+      }
+    })
+    .catch(error => {
+      var formContainer = document.getElementById('formContainer');
+      var errorContainer = document.createElement('div');
+      errorContainer.className = 'message';
+      errorContainer.textContent = 'An error occurred while logging out: ' + error.message;
+      formContainer.appendChild(errorContainer);
+    });
   }
 });

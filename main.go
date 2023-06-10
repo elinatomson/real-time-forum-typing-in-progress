@@ -23,6 +23,7 @@ func main() {
 	AllDataBases()
 
 	http.HandleFunc("/", handler)
+	http.HandleFunc("/userpage", userPage)
 	http.HandleFunc("/register", register)
 	http.HandleFunc("/login", logIn)
 	http.HandleFunc("/logout", logOut)

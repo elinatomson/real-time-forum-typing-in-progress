@@ -65,14 +65,3 @@ func checkUser(w http.ResponseWriter, user User) error {
 	}
 	return errors.New("Nickname or password is not correct!")
 }
-
-func logOut(w http.ResponseWriter, r *http.Request) {
-	err := deleteSession(r)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	// Redirect the user to the main page
-	http.Redirect(w, r, "/", http.StatusFound)
-}

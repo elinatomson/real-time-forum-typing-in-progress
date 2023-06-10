@@ -48,7 +48,4 @@ func addPost(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-
-	//back to the homepage after successful post creation
-	http.Redirect(w, r, "/", http.StatusFound)
 }

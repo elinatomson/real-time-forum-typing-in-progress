@@ -45,13 +45,11 @@ func addUserData(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
 	w.WriteHeader(http.StatusCreated)
 }
 
 func insertUserData(userData UserData) error {
 	//checking if nickname or email already exists
-
 	stmt := `SELECT email FROM users WHERE email = ?`
 	row := db.QueryRow(stmt, userData.Email)
 	err := row.Scan(&userData.Email)
