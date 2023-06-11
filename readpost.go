@@ -16,9 +16,29 @@ func readPost(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
+	var comment Comment
+	var allComments []Comment
+	rows1, _ := db.Query(`SELECT commentID, postID, comment, nickname, date FROM comments WHERE postID = ?`, id)
+	for rows1.Next() {
+		rows1.Scan(&comment.CommentID, &comment.PostID, &comment.Comment, &comment.CommentNickname, &comment.CommentDate)
+		allComments = append(allComments, comment)
+	}
+
+	//struct to hold both the post and comments
+	type PostWithComments struct {
+		Post     Post      `json:"post"`
+		Comments []Comment `json:"comments"`
+	}
+
+	//create an instance of the struct and populate it with the post and comments
+	postWithComments := PostWithComments{
+		Post:     post,
+		Comments: allComments,
+	}
+
 	//set the response content type to JSON
 	w.Header().Set("Content-Type", "application/json")
 
-	//send the post as a JSON response
-	json.NewEncoder(w).Encode(post)
+	//send the post and comments as a JSON response
+	json.NewEncoder(w).Encode(postWithComments)
 }

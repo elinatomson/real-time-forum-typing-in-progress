@@ -42,7 +42,7 @@ func logInUser(w http.ResponseWriter, r *http.Request) {
 
 func checkUser(w http.ResponseWriter, user User) error {
 	if sessionExists(db, user.Nickname) {
-		_, err := db.Exec(`DELETE FROM sessions WHERE username = ?`, user.Nickname)
+		_, err := db.Exec(`DELETE FROM sessions WHERE nickname = ?`, user.Nickname)
 		if err != nil {
 			return err
 		}

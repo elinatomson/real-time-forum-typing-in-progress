@@ -12,8 +12,8 @@ function loadUserPage() {
           <div class="dropdown">
             <button class="dropbtn">Menu</button>
             <div class="dropdown-content">
-              <a id="logout-button">Log out</a>
               <a id="newpost">New post</a>
+              <a id="logout-button">Log out</a>
             </div>
           </div>
           <div class="heading">
@@ -23,12 +23,17 @@ function loadUserPage() {
         <div id="formContainer" class="form-container">
           <div id="postContainer"></div>
         </div>
+        <footer class="footer">
+          <div>Authors:</div>
+          <a class="authors" href="https://01.kood.tech/git/elinat">elinat</a> <br>
+          <a class="authors" href="https://01.kood.tech/git/Anni.M">Anni.M</a>
+        </footer>
       `;
   
       document.body.innerHTML = modifiedHTML; //replacing entire document body with the modified HTML structure
       document.body.appendChild(contentContainer); //adding user-specific content to the document body
   
-      //including the .js files, because loadUserPage function is used over there
+      //including the .js files, because loadUserPage function is used in those
       var logInScript = document.createElement('script');
       logInScript.src = './static/JS/login.js';
       document.body.appendChild(logInScript);
@@ -50,6 +55,7 @@ function loadUserPage() {
     fetch('/posts')
         .then(response => response.json())
         .then(posts => {
+          if (Array.isArray(posts)) { // Check if posts is an array
             var postContainer = document.getElementById('postContainer');
             posts.forEach(post => {
                 var postElement = document.createElement('div');
@@ -58,30 +64,45 @@ function loadUserPage() {
                 postElement.innerHTML = `
                 <div class="post-list-title">${post.title}</div>
                 <div class="poster">
-                <p>${post.content}</p>
-                Posted by ${post.nickname}
-                at ${formattedDate}
+                  <p>${post.content}</p>
+                  Posted by ${post.nickname}
+                  at ${formattedDate}
                 </div>
                 <div class="poster">
-                ${post.movies}
-                ${post.serials}
-                ${post.realityshows}
+                  ${post.movies}
+                  ${post.serials}
+                  ${post.realityshows}
                 </div>
                 `;
             
-            //to make post clickable, so you can see specific post
+            //to make post clickable, so you can see this post
               postElement.onclick = function() {
                 loadPostPage(post.ID);
               };
                 postContainer.appendChild(postElement);
             });
+          } else {
+            var formContainer = document.getElementById('formContainer');
+            var errorContainer = document.createElement('div');
+            errorContainer.className = 'message';
+            errorContainer.textContent = 'No posts available. Please click on Menu to create a post.';
+            formContainer.appendChild(errorContainer);
+          }
         })
-        .catch(error => {
-            console.error('An error occurred while fetching the posts:', error);
-        });
+        .catch(error => { 
+          var formContainer = document.getElementById('formContainer');
+          var errorContainer = document.createElement('div');
+          errorContainer.className = 'message';
+          errorContainer.textContent = error.message;
+          formContainer.appendChild(errorContainer);
+      });
     })
-    .catch(error => {
-      console.error('An error occurred while loading the user page:', error);
+    .catch(error => { 
+      var formContainer = document.getElementById('formContainer');
+      var errorContainer = document.createElement('div');
+      errorContainer.className = 'message';
+      errorContainer.textContent = error.message;
+      formContainer.appendChild(errorContainer);
     });
   }
   

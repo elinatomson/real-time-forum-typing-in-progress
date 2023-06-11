@@ -1,44 +1,67 @@
 function loadPostPage(postID) {
     fetch(`/readpost?id=${postID}`)
     .then(response => response.json())
-    .then(post => {
+    .then(data => {
         var formContainer = document.getElementById('formContainer');
-        var formattedDate = new Date(post.date).toLocaleString();
+        var formattedDate = new Date(data.post.date).toLocaleString();
 
-        formContainer.innerHTML = `
-                    <div class="heading">
-                        ${post.title}
-                    </div>
-                    <p class="content">
-                        ${post.content}
-                    </p>
-                    <div class="poster">
-                        Posted by ${post.nickname}
-                        at ${formattedDate}
-                    </div>
-                    <div class="poster">
-                        ${post.movies}
-                        ${post.serials}
-                        ${post.realityshows}
-                    </div>
-                    <form id="commentform">
-                        <p class="align">
-                            <textarea id="comment" class="placeholder"  cols="40" rows="5" wrap="hard" name="comment" placeholder="Comment" required></textarea>
-                        </p>
-                        <div class="align">
-                            <button class="buttons" type="submit">Add comment</button>
+        var postHTML = `
+                    <div class="readpost">
+                        <div class="heading">
+                            ${data.post.title}
                         </div>
-                    </form>
-                    <p class="align">
-                        <input id="back" class="buttons" type="button" value="Back to main page">
-                    </p>
+                        <p class="content">
+                            ${data.post.content}
+                        </p>
+                        <div class="poster">
+                            Posted by ${data.post.nickname}
+                            at ${formattedDate}
+                        </div>
+                        <div class="poster">
+                            ${data.post.movies}
+                            ${data.post.serials}
+                            ${data.post.realityshows}
+                        </div>
+                    </div>
                     `;
+        var commentsHTML = "";
+        if (data.comments) {
+            data.comments.forEach(comment => {
+                var commentFormattedDate = new Date(comment.commentdate).toLocaleString();
+                commentsHTML += `
+                    <div class="readcomment">
+                        <div class="content">
+                            ${comment.comment}
+                        </div>
+                        <div class="poster">
+                            Commented by ${comment.commentnickname} 
+                            at ${commentFormattedDate}
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        formContainer.innerHTML = postHTML + commentsHTML + `
+            <form id="commentform">
+                <p class="align">
+                    <textarea id="comment" class="input" cols="40" rows="5" wrap="hard" name="comment" placeholder="Comment" required></textarea>
+                </p>
+                <div class="align">
+                    <button class="buttons" type="submit">Add comment</button>
+                </div>
+            </form>
+            <p class="align">
+                <input id="back" class="buttons" type="button" value="Back to main page">
+            </p>
+        `;
+
         var commentForm = document.getElementById('commentform');
         commentForm.addEventListener('submit', function(event) {
             event.preventDefault();
     
             var comment = document.getElementById('comment').value;
-            var postID = post.ID
+            var postID = data.post.ID
     
             submitComment(comment, postID);
         });
@@ -71,7 +94,6 @@ function submitComment(comment, postID) {
 }
 
 function sendCommentData(commentData) {
-    //var postID = post.ID// Get the post ID (you can retrieve it from the current page URL or any other way)
     fetch(`/commenting?id=${commentData.postID}`, {
         method: 'POST',
         headers: {
@@ -99,7 +121,7 @@ function sendCommentData(commentData) {
         var formContainer = document.getElementById('formContainer');
         var errorContainer = document.createElement('div');
         errorContainer.className = 'message';
-        errorContainer.textContent = 'An error occurred while logging out: ' + error.message;
+        errorContainer.textContent = error.message;
         formContainer.appendChild(errorContainer);
     });
 }

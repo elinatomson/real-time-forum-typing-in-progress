@@ -20,7 +20,7 @@ func main() {
 	}
 	defer db.Close()
 	//creating all tables into the database
-	AllDataBases()
+	allDataBases()
 
 	http.HandleFunc("/", handler)
 	http.HandleFunc("/userpage", userPage)

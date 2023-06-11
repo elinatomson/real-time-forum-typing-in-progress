@@ -109,7 +109,7 @@ function sendPostData (postData) {
         var formContainer = document.getElementById('formContainer');
         var errorContainer = document.createElement('div');
         errorContainer.className = 'message';
-        errorContainer.textContent = 'An error occurred while logging out: ' + error.message;
+        errorContainer.textContent = error.message;
         formContainer.appendChild(errorContainer);
     });
 }

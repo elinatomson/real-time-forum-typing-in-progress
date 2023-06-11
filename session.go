@@ -10,8 +10,13 @@ import (
 	"github.com/gofrs/uuid"
 )
 
+type Session struct {
+	Cookie   string
+	Nickname string
+}
+
 func addCookie(w http.ResponseWriter, nickname string) {
-	//Generate a new UUID for a session.
+	//generate a new UUID for a session.
 	uuid, _ := uuid.NewV4()
 	value := uuid.String()
 	expire := time.Now().Add(1 * time.Hour)
@@ -28,7 +33,7 @@ func addCookie(w http.ResponseWriter, nickname string) {
 }
 func checkSession(w http.ResponseWriter, r *http.Request) (int, error) {
 	cookie, err := r.Cookie("sessionId")
-	//Checks if there's a cookie
+	//checks if there's a cookie
 	if err != nil {
 		fmt.Println("cookie was not found")
 		if err == http.ErrNoCookie {
@@ -36,7 +41,7 @@ func checkSession(w http.ResponseWriter, r *http.Request) (int, error) {
 		}
 		return 0, err
 	}
-	//Verify that the uuID is valid
+	//verify that the uuID is valid
 	uuid, err := uuid.FromString(cookie.Value)
 	fmt.Println(cookie.Value)
 	if err != nil {
@@ -50,7 +55,7 @@ func checkSession(w http.ResponseWriter, r *http.Request) (int, error) {
 	return 1, nil
 }
 
-// Convert checkSession into bool value, in order to use it in html
+// convert checkSession into bool value, in order to use it in html
 func loggedIn(w http.ResponseWriter, r *http.Request) bool {
 	id, _ := checkSession(w, r)
 	if id == 0 {
@@ -59,7 +64,7 @@ func loggedIn(w http.ResponseWriter, r *http.Request) bool {
 	return true
 }
 
-// If logging out, then deleting session
+// if logging out, then deleting session
 func deleteSession(r *http.Request) error {
 	cookie, err := r.Cookie("sessionId")
 	if err != nil {
@@ -80,7 +85,7 @@ func deleteSession(r *http.Request) error {
 	return nil
 }
 
-// Getting nickname from session
+// getting nickname from session
 func nicknameFromSession(r *http.Request) (string, error) {
 	cookie, err := r.Cookie("sessionId")
 	if err != nil {

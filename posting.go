@@ -22,13 +22,10 @@ type Post struct {
 type Comment struct {
 	CommentID       int
 	PostID          int
-	PostTitle       string    `json:"posttitle"`
 	Comment         string    `json:"comment"`
 	CommentNickname string    `json:"commentnickname"`
 	CommentDate     time.Time `json:"commentdate"`
 }
-
-var posts []Post
 
 func posting(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {

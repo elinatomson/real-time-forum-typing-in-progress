@@ -15,49 +15,62 @@ function loggingOut() {
         if (response.ok) {
             showLoggedOutMessage();
         } else {
-            return response.text(); //reading response as text
+            return response.text(); //returns response.text() to propagate the error message to the next .then() in the chain
         }
     })
-    .then(errorMessage => {
+    .then(errorMessage => { //to handle the error message received from the previous .then() in case the response was not successful
         if (errorMessage) {
             var formContainer = document.getElementById('formContainer');
-            var errorContainer = document.createElement('div');
+            var errorContainer = document.createElement('div'); //creating an error container element and appending error message to the form container.
             errorContainer.className = 'message';
             errorContainer.textContent = errorMessage;
             formContainer.appendChild(errorContainer);
         }
     })
-    .catch(error => {
+    .catch(error => { //to handle any other errors that might occur during the fetch request or any of the .then() functions
         var formContainer = document.getElementById('formContainer');
         var errorContainer = document.createElement('div');
         errorContainer.className = 'message';
-        errorContainer.textContent = 'An error occurred while logging out: ' + error.message;
+        errorContainer.textContent = error.message;
         formContainer.appendChild(errorContainer);
     });
 }
 
-function showLoggedOutMessage() {
-    var formContainer = document.getElementById('formContainer');
+function showLoggedOutMessage(html) {
+   //logout HTML content
+   var contentContainer = document.createElement('div');
+   contentContainer.innerHTML = html;
 
-    formContainer.innerHTML = `
-        <div class="heading">You are logged out. Come visit us again!</div>
-        <p class="align">
-            <input id="main-page" class="buttons" type="button" value="Back to main page">
-        </p>
-    `;
+   var modifiedHTML = `
+   <header class="header">
+     <div class="heading">
+       <div id="main-page1">Fun Facts Forum</div>
+     </div>
+   </header>
+   <div class="heading">You are logged out. Come visit us again!</div>
+   <p class="align">
+       <input id="main-page2" class="buttons" type="button" value="Back to main page">
+   </p>
+   <footer class="footer">
+     <div>Authors:</div>
+     <a class="authors" href="https://01.kood.tech/git/elinat">elinat</a> <br>
+     <a class="authors" href="https://01.kood.tech/git/Anni.M">Anni.M</a>
+   </footer>
+ `;
 
-    var mainPage = document.getElementById('main-page');
-    mainPage.addEventListener('click', function(event) {
+    document.body.innerHTML = modifiedHTML; //replacing entire document body with the modified HTML structure
+    document.body.appendChild(contentContainer); //adding user-specific content to the document body
+
+    var mainPage1 = document.getElementById('main-page1');
+    mainPage1.addEventListener('click', function(event) {
+        event.preventDefault();
+        window.location.href = '/';
+    });
+
+    var mainPage2 = document.getElementById('main-page2');
+    mainPage2.addEventListener('click', function(event) {
         event.preventDefault();
         window.location.href = '/';
     });
 }
-
-
-
-
-
-
-
-
 

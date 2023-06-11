@@ -2,8 +2,6 @@ package main
 
 import (
 	"database/sql"
-	"net/http"
-	"strconv"
 )
 
 var db *sql.DB
@@ -36,7 +34,6 @@ const CommentDB = `
 		comment   			TEXT,
 		date       			DATETIME,
 		postID            	INTEGER,
-		postTitle   		TEXT,
 		nickname          	TEXT
 		)`
 const SessionDB = `
@@ -45,20 +42,7 @@ const SessionDB = `
 		cookie				TEXT NOT NULL
 	)`
 
-type Page struct {
-	Posts    []Post
-	Comments []Comment
-	ID       int
-	LogIn    bool
-	User     string
-}
-
-type Session struct {
-	Cookie   string
-	Nickname string
-}
-
-func CreateDataBase(data string) error {
+func createDataBase(data string) error {
 	stmt, err := db.Prepare(data)
 	if err != nil {
 		return err
@@ -67,20 +51,10 @@ func CreateDataBase(data string) error {
 	stmt.Close()
 	return nil
 }
-func AllDataBases() {
+func allDataBases() {
 	//create named tables
-	CreateDataBase(UserDB)
-	CreateDataBase(PostDB)
-	CreateDataBase(CommentDB)
-	CreateDataBase(SessionDB)
-}
-func TitleFromPost(r *http.Request) (string, error) {
-	id := r.FormValue("id")
-	id1, _ := strconv.Atoi(id)
-	var title string
-	err := db.QueryRow(`SELECT title FROM posts WHERE postID = ?`, id1).Scan(&title)
-	if err != nil {
-		return "", err
-	}
-	return title, nil
+	createDataBase(UserDB)
+	createDataBase(PostDB)
+	createDataBase(CommentDB)
+	createDataBase(SessionDB)
 }
