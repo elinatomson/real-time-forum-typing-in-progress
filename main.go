@@ -28,6 +28,9 @@ func main() {
 	http.HandleFunc("/login", logIn)
 	http.HandleFunc("/logout", logOut)
 	http.HandleFunc("/create-post", posting)
+	http.HandleFunc("/commenting", commenting)
+	http.HandleFunc("/posts", displayPosts)
+	http.HandleFunc("/readpost", readPost)
 
 	fileServer := http.FileServer(http.Dir("./static/"))
 	http.Handle("/static/", http.StripPrefix("/static", fileServer))

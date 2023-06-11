@@ -105,6 +105,8 @@ a {
 .post-list-title {
   font-size: 20pt;
   color:  #17252A;
+  text-align: center;
+
 }
 
 .poster {
@@ -117,9 +119,9 @@ a {
     padding-top: 1%;
     padding-bottom: 1%;
     border: 1px solid;
-    width: 40%;
-    margin-left: 30%;
-    margin-right: 30%;
+    width: 70%;
+    margin-left: 15%;
+    margin-right: 15%;
 }
 
 .post:hover{
@@ -129,8 +131,10 @@ a {
 
 .category {
   margin-right: 2%;
+  margin-left: 5%;
   display: inline-block;
   padding: 3px;
+  text-align: center;
 }
 
 .category-tag {

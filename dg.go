@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"net/http"
 	"strconv"
-	"time"
 )
 
 var db *sql.DB
@@ -52,15 +51,6 @@ type Page struct {
 	ID       int
 	LogIn    bool
 	User     string
-}
-
-type Comment struct {
-	CommentID       int
-	PostID          int
-	PostTitle       string
-	Comment         string
-	CommentNickname string
-	CommentDate     time.Time
 }
 
 type Session struct {

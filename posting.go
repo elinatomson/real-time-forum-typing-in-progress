@@ -19,6 +19,15 @@ type Post struct {
 	Comments     []Comment
 }
 
+type Comment struct {
+	CommentID       int
+	PostID          int
+	PostTitle       string    `json:"posttitle"`
+	Comment         string    `json:"comment"`
+	CommentNickname string    `json:"commentnickname"`
+	CommentDate     time.Time `json:"commentdate"`
+}
+
 var posts []Post
 
 func posting(w http.ResponseWriter, r *http.Request) {
@@ -39,6 +48,8 @@ func addPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	post.Date = time.Now()
+
 	var nickname, _ = nicknameFromSession(r)
 
 	if post.Title != "" && post.Content != "" {
@@ -47,5 +58,38 @@ func addPost(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
+	}
+}
+
+func commenting(w http.ResponseWriter, r *http.Request) {
+	if r.Method == "POST" {
+		addComment(w, r)
+	} else {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		fmt.Fprint(w, "Error 405, method not allowed")
+		return
+	}
+}
+
+func addComment(w http.ResponseWriter, r *http.Request) {
+	var comment Comment
+	err := json.NewDecoder(r.Body).Decode(&comment)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	comment.CommentDate = time.Now()
+	id := r.URL.Query().Get("id")
+	var nickname, _ = nicknameFromSession(r)
+
+	if comment.Comment != "" {
+		_, err := db.Exec(`INSERT INTO comments (comment, date, nickname, postID) VALUES (?, ?, ?, ?)`, comment.Comment, comment.CommentDate, nickname, id)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		//to show the same post page with added comment
+		//http.Redirect(w, r, r.Header.Get("Referer"), http.StatusFound)
 	}
 }
