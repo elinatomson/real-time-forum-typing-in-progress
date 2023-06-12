@@ -12,3 +12,5 @@ func userPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
+
+//TO-DO: probably refresh sets logged == 0, check where in code refresh is handled or if there is need for pointers

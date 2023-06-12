@@ -17,3 +17,5 @@ func displayPosts(w http.ResponseWriter, r *http.Request) {
 	//send the posts as a JSON response
 	json.NewEncoder(w).Encode(allPosts)
 }
+
+//TO-DO: check if all local code is ok
