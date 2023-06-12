@@ -35,7 +35,7 @@ func main() {
 	http.HandleFunc("/readpost", readPost)
 
 	//new endpoint for live chat endpoint
-	http.HandleFunc("/websocket", websocket.WebsocketHandler)
+	http.HandleFunc("/ws", websocket.WebsocketHandler)
 
 	fileServer := http.FileServer(http.Dir("./static/"))
 	http.Handle("/static/", http.StripPrefix("/static", fileServer))
@@ -49,6 +49,25 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprint(w, "Error 404, page not found")
 		return
 	}
-	tmpl := template.Must(template.ParseFiles("static/index.html"))
-	tmpl.Execute(w, nil)
+
+	/*
+		tmpl := template.Must(template.ParseFiles("static/index.html"))
+		tmpl.Execute(w, nil)
+	*/
+
+	tmpl, err := template.ParseFiles("static/index.html")
+	if err != nil {
+		log.Println("Failed to parse template:", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprint(w, "Internal Server Error")
+		return
+	}
+
+	err = tmpl.Execute(w, nil)
+	if err != nil {
+		log.Println("Failed to execute template:", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprint(w, "Internal Server Error")
+		return
+	}
 }

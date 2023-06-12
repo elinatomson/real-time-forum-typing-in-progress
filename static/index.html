@@ -11,7 +11,7 @@
 <body class="body">
     <div>
         <header id="header" class="header">
-            <div class="heading">
+            <div class="heading">main
                 <a id="mainpage">Fun Facts Forum</a>
             </div>
         </header>
@@ -25,6 +25,12 @@
             <a class="buttons" id="register-button">Register</a>
         </p>
         </div>
+        <div>
+            <textarea id="message-box" rows="10" cols="50" readonly></textarea>
+            <input type="text" id="message-input">
+            <button id="send-button">Send</button>
+          </div>
+          
         <footer class="footer">
             <div>Authors:</div>
             <a class="authors" href="https://01.kood.tech/git/elinat">elinat</a> <br>
@@ -38,4 +44,5 @@
     <script type="text/javascript" src="./static/JS/newpost.js"></script>
     <script type="text/javascript" src="./static/JS/readpost.js"></script>
     <script type="text/javascript" src="./static/JS/main.js"></script>
+    <script src="./static/JS/websocket.js"></script>
 </body>

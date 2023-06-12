@@ -1,4 +1,4 @@
-package main
+package websocket
 
 import (
 	"log"
@@ -46,5 +46,5 @@ func WebsocketHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Close the WebSocket connection
-	conn.Close()
+	defer conn.Close()
 }

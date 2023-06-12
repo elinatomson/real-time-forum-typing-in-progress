@@ -1,4 +1,6 @@
+//TO-DO / currently logOut is null, no button on page
 var logOut = document.getElementById('logout-button');
+
 logOut.addEventListener('click', function(event) {
     event.preventDefault();
     loggingOut();
