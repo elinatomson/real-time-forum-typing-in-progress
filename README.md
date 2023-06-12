@@ -1,7 +1,7 @@
 # forum
 
 ## How to use
-Type in your terminal: go run main.go
+Type in your terminal: go run .
 In the Windows Security alert cklick "Allow access"
 Open http://localhost:8080
 To stop the server, click Ctrl + C in your terminal

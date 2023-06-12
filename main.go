@@ -8,6 +8,8 @@ import (
 	"net/http"
 
 	_ "github.com/mattn/go-sqlite3"
+
+	"real-time-forum/websocket"
 )
 
 var tpl *template.Template
@@ -31,6 +33,9 @@ func main() {
 	http.HandleFunc("/commenting", commenting)
 	http.HandleFunc("/posts", displayPosts)
 	http.HandleFunc("/readpost", readPost)
+
+	//new endpoint for live chat endpoint
+	http.HandleFunc("/websocket", websocket.WebsocketHandler)
 
 	fileServer := http.FileServer(http.Dir("./static/"))
 	http.Handle("/static/", http.StripPrefix("/static", fileServer))
