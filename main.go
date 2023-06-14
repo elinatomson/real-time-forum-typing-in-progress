@@ -34,7 +34,7 @@ func main() {
 	http.HandleFunc("/posts", displayPosts)
 	http.HandleFunc("/readpost", readPost)
 
-	//new endpoint for live chat endpoint
+	//new endpoint for live chat endpoint - maybe it should connect to handler
 	http.HandleFunc("/ws", websocket.WebsocketHandler)
 
 	fileServer := http.FileServer(http.Dir("./static/"))
