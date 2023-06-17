@@ -50,10 +50,6 @@ function loadUserPage() {
       readPostScript.src = './static/JS/readpost.js';
       document.body.appendChild(readPostScript);
 
-      var sessionScript = document.createElement('script');
-      sessionScript.src = './static/JS/session.js';
-      document.body.appendChild(sessionScript);
-
     //to see all posts on user mainpage
     fetch('/posts')
         .then(response => response.json())

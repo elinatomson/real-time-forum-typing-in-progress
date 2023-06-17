@@ -1,7 +1,9 @@
-var logIn = document.getElementById('login-button');
-logIn.addEventListener('click', function(event) {
-  event.preventDefault();
-  showLogInForm();
+document.addEventListener("DOMContentLoaded", () => {
+  var logIn = document.getElementById('login-button');
+  logIn.addEventListener('click', function(event) {
+    event.preventDefault();
+    showLogInForm();
+  });
 });
 
 function showLogInForm() {
