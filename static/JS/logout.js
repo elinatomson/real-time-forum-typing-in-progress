@@ -46,7 +46,7 @@ function showLoggedOutMessage(html) {
    var modifiedHTML = `
    <header class="header">
      <div class="heading">
-       <div id="main-page1">Fun Facts Forum</div>
+       <div id="mainpage">Fun Facts Forum</div>
      </div>
    </header>
    <div class="heading">You are logged out. Come visit us again!</div>
@@ -62,12 +62,6 @@ function showLoggedOutMessage(html) {
 
     document.body.innerHTML = modifiedHTML; //replacing entire document body with the modified HTML structure
     document.body.appendChild(contentContainer); //adding user-specific content to the document body
-
-    var mainPage1 = document.getElementById('main-page1');
-    mainPage1.addEventListener('click', function(event) {
-        event.preventDefault();
-        window.location.href = '/';
-    });
 
     var mainPage2 = document.getElementById('main-page2');
     mainPage2.addEventListener('click', function(event) {

@@ -33,6 +33,7 @@ func main() {
 	http.HandleFunc("/commenting", commenting)
 	http.HandleFunc("/posts", displayPosts)
 	http.HandleFunc("/readpost", readPost)
+	http.HandleFunc("/session", session)
 
 	//new endpoint for live chat endpoint - maybe it should connect to handler
 	http.HandleFunc("/ws", websocket.WebsocketHandler)

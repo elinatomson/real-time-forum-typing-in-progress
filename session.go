@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -11,8 +12,8 @@ import (
 )
 
 type Session struct {
-	Cookie   string
-	Nickname string
+	Cookie   string `json:"cookie"`
+	Nickname string `json:"nickname"`
 }
 
 func addCookie(w http.ResponseWriter, nickname string) {
@@ -31,6 +32,53 @@ func addCookie(w http.ResponseWriter, nickname string) {
 		return
 	}
 }
+
+func session(w http.ResponseWriter, r *http.Request) {
+	if r.Method == "POST" {
+		decodeSession(w, r)
+	} else {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		fmt.Fprint(w, "Error 405, method not allowed")
+		return
+	}
+}
+
+func decodeSession(w http.ResponseWriter, r *http.Request) {
+	var session Session
+	err := json.NewDecoder(r.Body).Decode(&session)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	err = getCookieFromSession(w, session)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+func getCookieFromSession(w http.ResponseWriter, session Session) error {
+	// Query the database to retrieve the stored cookie value
+	stmt := `SELECT cookie FROM sessions WHERE cookie = ?`
+	row := db.QueryRow(stmt, session.Cookie)
+	var storedCookie string
+	err := row.Scan(&storedCookie)
+	if err != nil {
+		fmt.Fprintf(w, "Cookie does not match!")
+	}
+
+	fmt.Println(session.Cookie)
+	fmt.Println(storedCookie)
+
+	// Compare the client-side cookie with the stored cookie
+	if session.Cookie == storedCookie {
+		fmt.Fprintf(w, "Cookie matches!")
+	} else {
+		fmt.Fprintf(w, "Cookie does not match!")
+	}
+	return nil
+}
+
 func checkSession(w http.ResponseWriter, r *http.Request) (int, error) {
 	cookie, err := r.Cookie("sessionId")
 	//checks if there's a cookie
