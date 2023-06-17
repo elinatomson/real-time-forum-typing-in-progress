@@ -321,7 +321,50 @@ a {
     color: white;
 }
 
-.form-container {
+.container {
+    display: flex;
+}
+
+.form-container1 {
     margin: 20px auto;
     max-width: 500px;
+}
+
+.form-container {
+    flex: 1;
+    max-width: 500px;
+    margin-left: 26%;
+    margin-top: 2%;
+}
+
+.forumusers {
+    margin-top: 2%;
+    margin-left: 20px;
+    margin-bottom: 2%;
+    border: 1px solid white;
+    text-align: center;
+}
+
+.users {
+    font-size: 30px;
+}
+
+.user {
+    cursor: pointer;
+    font-size: 20px;
+    width: 100%;
+}
+
+.user:hover {
+    background-color: #2B7A78;
+    transition: 1s;
+    color: white;
+}
+
+.online {
+    color: rgb(4, 107, 4)
+}
+
+.offline {
+    color: rgb(250, 73, 73);
 }

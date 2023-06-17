@@ -12,6 +12,7 @@ import (
 type User struct {
 	Nickname string `json:"nickname"`
 	Password string `json:"password"`
+	Online   bool   `json:"online"`
 }
 
 func logIn(w http.ResponseWriter, r *http.Request) {
@@ -64,4 +65,43 @@ func checkUser(w http.ResponseWriter, user User) error {
 		return nil
 	}
 	return errors.New("Nickname or password is not correct!")
+}
+
+func getUsers(w http.ResponseWriter, r *http.Request) {
+	//query the users table and join with the sessions table to check online status, meaning if the same nickname has a session, then he is as online.
+	rows, err := db.Query(`
+		SELECT users.nickname,(CASE WHEN sessions.nickname IS NULL THEN FALSE ELSE TRUE END) AS online
+		FROM users LEFT JOIN sessions ON users.nickname = sessions.nickname
+	`)
+	if err != nil {
+		panic(err)
+	}
+
+	users := make([]User, 0)
+
+	//iterate over the query results and build the user list
+	for rows.Next() {
+		var nickname string
+		var online bool
+		rows.Scan(&nickname, &online)
+
+		user := User{
+			Nickname: nickname,
+			Online:   online,
+		}
+		users = append(users, user)
+	}
+
+	//convert the user list to JSON
+	jsonData, err := json.Marshal(users)
+	if err != nil {
+		panic(err)
+	}
+
+	//set the response headers
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+
+	//write the JSON data to the response
+	w.Write(jsonData)
 }

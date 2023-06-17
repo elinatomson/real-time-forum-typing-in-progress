@@ -1,4 +1,3 @@
-//error in server: newPost is null
 var newPost = document.getElementById('newpost');
 newPost.addEventListener('click', function(event) {
     event.preventDefault();

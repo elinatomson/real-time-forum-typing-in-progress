@@ -20,19 +20,56 @@ function loadUserPage() {
             <div id="mainpage">Fun Facts Forum</div>
           </div>
         </header>
-        <div id="formContainer" class="form-container">
-          <div id="postContainer"></div>
+        <div class="container">
+          <div class="forumusers">
+            <div class="post-list-title">Forum users:</div>
+            <div id="user-list-container"></div>
+          </div>
+          <div id="formContainer" class="form-container">
+            <div id="postContainer"></div>
+          </div>
+        </div>
+        <div>
+          <textarea id="message-box" rows="10" cols="50" readonly></textarea>
+          <div>
+            <input type="text" id="message-input">
+            <button id="send-button">Send</button>
+          </div>
         </div>
         <footer class="footer">
           <div>Authors:</div>
           <a class="authors" href="https://01.kood.tech/git/elinat">elinat</a> <br>
           <a class="authors" href="https://01.kood.tech/git/Anni.M">Anni.M</a>
-        </footer>
+        </footer>      
       `;
   
       document.body.innerHTML = modifiedHTML; //replacing entire document body with the modified HTML structure
       document.body.appendChild(contentContainer); //adding user-specific content to the document body
-  
+
+      //to get online and offline users list
+        fetch('/users')
+        .then(response => response.json())
+        .then(users => {
+    
+          // Update the user page HTML with the user list
+          const userListContainer = document.getElementById('user-list-container');
+          userListContainer.className = 'users-container';
+    
+          users.forEach(user => {
+            const userItem = document.createElement('div');
+            userItem.className = 'user';
+            userItem.textContent = user.nickname;
+    
+            // Add a CSS class to indicate the online/offline status
+            userItem.classList.add(user.online ? 'online' : 'offline');
+    
+            userListContainer.appendChild(userItem);
+          });
+        })
+        .catch(error => {
+          console.error('Error loading user list:', error);
+      });
+
       //including the .js files, because loadUserPage function is used in those
       var logInScript = document.createElement('script');
       logInScript.src = './static/JS/login.js';
@@ -49,6 +86,10 @@ function loadUserPage() {
       var readPostScript = document.createElement('script');
       readPostScript.src = './static/JS/readpost.js';
       document.body.appendChild(readPostScript);
+
+      var websocketScript = document.createElement('script');
+      websocketScript.src = './static/JS/websocket.js';
+      document.body.appendChild(websocketScript);
 
     //to see all posts on user mainpage
     fetch('/posts')
@@ -103,7 +144,10 @@ function loadUserPage() {
       errorContainer.textContent = error.message;
       formContainer.appendChild(errorContainer);
     });
-  }
+    }
+    
+
+  
   
   
   

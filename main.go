@@ -28,6 +28,7 @@ func main() {
 	http.HandleFunc("/userpage", userPage)
 	http.HandleFunc("/register", register)
 	http.HandleFunc("/login", logIn)
+	http.HandleFunc("/users", getUsers)
 	http.HandleFunc("/logout", logOut)
 	http.HandleFunc("/create-post", posting)
 	http.HandleFunc("/commenting", commenting)
