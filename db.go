@@ -41,6 +41,14 @@ const SessionDB = `
 		nickname 			TEXT NOT NULL,
 		cookie				TEXT NOT NULL
 	)`
+const MessageDB = `
+	CREATE TABLE IF NOT EXISTS messages (
+		messageID				INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
+		message 			TEXT,
+		nicknamefrom		TEXT,
+		nicknameto			TEXT,
+		date       			DATETIME
+)`
 
 func createDataBase(data string) error {
 	stmt, err := db.Prepare(data)
@@ -57,4 +65,5 @@ func allDataBases() {
 	createDataBase(PostDB)
 	createDataBase(CommentDB)
 	createDataBase(SessionDB)
+	createDataBase(MessageDB)
 }

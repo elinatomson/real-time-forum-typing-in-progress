@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
-function showLogInForm() {
+export function showLogInForm() {
     var formContainer = document.getElementById('formContainer');
     formContainer.innerHTML = `
     <div class="heading">Please log in!</div>

@@ -1,3 +1,5 @@
+import { showLogInForm } from './login.js';
+
 var registerButton = document.getElementById('register-button')
 registerButton.addEventListener('click', function(event) {
   event.preventDefault();

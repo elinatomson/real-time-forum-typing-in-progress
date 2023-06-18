@@ -9,9 +9,19 @@ func displayPosts(w http.ResponseWriter, r *http.Request) {
 	var allPosts []Post
 	var post Post
 
-	rows, _ := db.Query(`SELECT postID, title, content, nickname, date, category1, category2, category3 FROM posts`)
+	rows, err := db.Query(`SELECT postID, title, content, nickname, date, category1, category2, category3 FROM posts`)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	defer rows.Close()
+
 	for rows.Next() {
-		rows.Scan(&post.ID, &post.Title, &post.Content, &post.Nickname, &post.Date, &post.Movies, &post.Serials, &post.Realityshows)
+		err := rows.Scan(&post.ID, &post.Title, &post.Content, &post.Nickname, &post.Date, &post.Movies, &post.Serials, &post.Realityshows)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 		allPosts = append(allPosts, post)
 	}
 	//send the posts as a JSON response
