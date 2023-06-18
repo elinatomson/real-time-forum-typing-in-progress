@@ -1,4 +1,4 @@
-
+export function webSoc() {
     // Create a WebSocket connection
     const socket = new WebSocket("ws://localhost:8080/ws");
   
@@ -72,3 +72,4 @@
   
     help me debug these files so that an echo websocket would appear in the forum once I start the server at localhost
     */
+  }

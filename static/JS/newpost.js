@@ -1,8 +1,12 @@
-var newPost = document.getElementById('newpost');
-newPost.addEventListener('click', function(event) {
-    event.preventDefault();
-    showNewPostForm();
-});
+import { loadUserPage } from './userpage.js';
+
+export function newPost() {
+    var newPost = document.getElementById('newpost');
+    newPost.addEventListener('click', function(event) {
+        event.preventDefault();
+        showNewPostForm();
+    });
+}
 
 function showNewPostForm() {
     var formContainer = document.getElementById('formContainer');

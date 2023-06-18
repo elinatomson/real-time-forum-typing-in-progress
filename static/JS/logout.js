@@ -1,9 +1,10 @@
-var logOut = document.getElementById('logout-button');
-
-logOut.addEventListener('click', function(event) {
-    event.preventDefault();
-    loggingOut();
-});
+export function logOut() {
+    var logout = document.getElementById('logout-button');
+    logout.addEventListener('click', function(event) {
+        event.preventDefault();
+        loggingOut();
+    });
+}
 
 function loggingOut() {
     fetch('http://localhost:8080/logout', {

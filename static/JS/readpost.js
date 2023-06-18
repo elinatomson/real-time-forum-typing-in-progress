@@ -1,4 +1,6 @@
-function loadPostPage(postID) {
+import { loadUserPage } from './userpage.js';
+
+export function loadPostPage(postID) {
     fetch(`/readpost?id=${postID}`)
     .then(response => response.json())
     .then(data => {

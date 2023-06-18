@@ -1,3 +1,5 @@
+import { loadUserPage } from './userpage.js';
+
 //forum name clickable and directing to mainpage
 loadPage()
 //when there is a matching cookie in the database, then ise userpage is displayed as a mainpage

@@ -1,4 +1,9 @@
-function loadUserPage() {
+import { usersForChat } from './chat.js';
+import { loadPostPage } from './readpost.js';
+import { newPost } from './newpost.js';
+import { logOut } from './logout.js';
+
+export function loadUserPage() {
     fetch('/userpage')
       .then(response => response.text())
       .then(html => {
@@ -29,13 +34,6 @@ function loadUserPage() {
             <div id="postContainer"></div>
           </div>
         </div>
-        <div>
-          <textarea id="message-box" rows="10" cols="50" readonly></textarea>
-          <div>
-            <input type="text" id="message-input">
-            <button id="send-button">Send</button>
-          </div>
-        </div>
         <footer class="footer">
           <div>Authors:</div>
           <a class="authors" href="https://01.kood.tech/git/elinat">elinat</a> <br>
@@ -46,50 +44,9 @@ function loadUserPage() {
       document.body.innerHTML = modifiedHTML; //replacing entire document body with the modified HTML structure
       document.body.appendChild(contentContainer); //adding user-specific content to the document body
 
-      //to get online and offline users list
-        fetch('/users')
-        .then(response => response.json())
-        .then(users => {
-    
-          // Update the user page HTML with the user list
-          const userListContainer = document.getElementById('user-list-container');
-          userListContainer.className = 'users-container';
-    
-          users.forEach(user => {
-            const userItem = document.createElement('div');
-            userItem.className = 'user';
-            userItem.textContent = user.nickname;
-    
-            // Add a CSS class to indicate the online/offline status
-            userItem.classList.add(user.online ? 'online' : 'offline');
-    
-            userListContainer.appendChild(userItem);
-          });
-        })
-        .catch(error => {
-          console.error('Error loading user list:', error);
-      });
-
-      //including the .js files, because loadUserPage function is used in those
-      var logInScript = document.createElement('script');
-      logInScript.src = './static/JS/login.js';
-      document.body.appendChild(logInScript);
-
-      var logOutScript = document.createElement('script');
-      logOutScript.src = './static/JS/logout.js';
-      document.body.appendChild(logOutScript);
-  
-      var newPostScript = document.createElement('script');
-      newPostScript.src = './static/JS/newpost.js';
-      document.body.appendChild(newPostScript);
-
-      var readPostScript = document.createElement('script');
-      readPostScript.src = './static/JS/readpost.js';
-      document.body.appendChild(readPostScript);
-
-      var websocketScript = document.createElement('script');
-      websocketScript.src = './static/JS/websocket.js';
-      document.body.appendChild(websocketScript);
+      usersForChat()
+      newPost()
+      logOut()
 
     //to see all posts on user mainpage
     fetch('/posts')
@@ -143,11 +100,9 @@ function loadUserPage() {
       errorContainer.className = 'message';
       errorContainer.textContent = error.message;
       formContainer.appendChild(errorContainer);
-    });
+      });
     }
     
 
-  
-  
   
   

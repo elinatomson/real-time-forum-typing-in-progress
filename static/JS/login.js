@@ -1,3 +1,5 @@
+import { loadUserPage } from './userpage.js';
+
 document.addEventListener("DOMContentLoaded", () => {
   var logIn = document.getElementById('login-button');
   logIn.addEventListener('click', function(event) {
