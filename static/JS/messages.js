@@ -72,47 +72,6 @@ export  function usersForChat() {
       formContainer.appendChild(errorContainer);
     });
 }
-    
-export function sendMessage(socket, message, nicknameTo, nicknameFrom) {
-  socket.send(message);
-  fetch('/message', {
-      method: 'POST',
-      headers: {
-          'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-          message: message,
-          nicknamefrom: nicknameFrom, 
-          nicknameto: nicknameTo
-      })
-  })
-  .then(response => {
-      if (response.ok) {
-          console.log("Message sent successfully");
-      } else {
-          return response.text();
-      }
-  })
-  .then(errorMessage => {
-      if (errorMessage) {
-          if (errorMessage) {
-          var formContainer = document.getElementById('formContainer');
-          var errorContainer = document.createElement('div');
-          errorContainer.className = 'message';
-          errorContainer.textContent = errorMessage;
-          formContainer.appendChild(errorContainer);
-          }
-      }
-  })
-  .catch(error => {
-      var formContainer = document.getElementById('formContainer');
-      var errorContainer = document.createElement('div');
-      errorContainer.className = 'message';
-      errorContainer.textContent = 'An error occurred while sending messages: ' + error.message;
-      formContainer.appendChild(errorContainer);
-  });
-}
-
 
 export function displayMessages(nicknameTo) {
   fetch('/messages?nicknameTo=' + nicknameTo)

@@ -79,39 +79,6 @@ func getCookieFromSession(w http.ResponseWriter, session Session) error {
 	return nil
 }
 
-func checkSession(w http.ResponseWriter, r *http.Request) (int, error) {
-	cookie, err := r.Cookie("sessionId")
-	//checks if there's a cookie
-	if err != nil {
-		fmt.Println("cookie was not found")
-		if err == http.ErrNoCookie {
-			return 0, nil
-		}
-		return 0, err
-	}
-	//verify that the uuID is valid
-	uuid, err := uuid.FromString(cookie.Value)
-	fmt.Println(cookie.Value)
-	if err != nil {
-		return 0, err
-	}
-	var nickname string
-	err = db.QueryRow(`SELECT nickname FROM sessions WHERE cookie = ?`, uuid.String()).Scan(&nickname)
-	if err != nil {
-		return 0, err
-	}
-	return 1, nil
-}
-
-// convert checkSession into bool value, in order to use it in html
-func loggedIn(w http.ResponseWriter, r *http.Request) bool {
-	id, _ := checkSession(w, r)
-	if id == 0 {
-		return false
-	}
-	return true
-}
-
 // if logging out, then deleting session
 func deleteSession(r *http.Request) error {
 	cookie, err := r.Cookie("sessionId")
@@ -161,4 +128,28 @@ func sessionExists(db *sql.DB, nickname string) bool {
 		return false
 	}
 	return true
+}
+
+func checkSession(w http.ResponseWriter, r *http.Request) (int, error) {
+	cookie, err := r.Cookie("sessionId")
+	//checks if there's a cookie
+	if err != nil {
+		fmt.Println("cookie was not found")
+		if err == http.ErrNoCookie {
+			return 0, nil
+		}
+		return 0, err
+	}
+	//verify that the uuID is valid
+	uuid, err := uuid.FromString(cookie.Value)
+	fmt.Println(cookie.Value)
+	if err != nil {
+		return 0, err
+	}
+	var nickname string
+	err = db.QueryRow(`SELECT nickname FROM sessions WHERE cookie = ?`, uuid.String()).Scan(&nickname)
+	if err != nil {
+		return 0, err
+	}
+	return 1, nil
 }

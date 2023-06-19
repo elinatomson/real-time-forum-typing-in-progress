@@ -1,6 +1,6 @@
 import { usersForChat } from './messages.js';
 import { loadPostPage } from './readpost.js';
-import { newPost } from './newpost.js';
+import { newPost } from './posting.js';
 import { logOut } from './logout.js';
 
 export function loadUserPage() {
