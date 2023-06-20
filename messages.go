@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 	"time"
 )
@@ -59,16 +58,6 @@ func addMessage(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-
-		// Convert the message to a JSON string
-		jsonMsg, err := json.Marshal(message)
-		if err != nil {
-			log.Println("Failed to marshal message:", err)
-			return
-		}
-
-		// Send the message to the recipient user's WebSocket connection
-		handleMessage(message.NicknameTo, string(jsonMsg))
 	}
 
 	w.WriteHeader(http.StatusCreated)
