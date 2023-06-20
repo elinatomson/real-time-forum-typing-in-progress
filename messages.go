@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
 	"time"
 )
 
@@ -65,11 +66,20 @@ func addMessage(w http.ResponseWriter, r *http.Request) {
 }
 
 func getMessages(w http.ResponseWriter, r *http.Request) {
+	page := r.URL.Query().Get("page")
+	pageSize := r.URL.Query().Get("pageSize")
+	//convert page and pageSize to integers
+	pageNum, _ := strconv.Atoi(page)
+	pageSizeNum, _ := strconv.Atoi(pageSize)
+	//calculate the offset based on the page number and page size
+	offset := (pageNum - 1) * pageSizeNum
+
 	nicknameTo := r.URL.Query().Get("nicknameTo")
 	nicknameFrom, _ := nicknameFromSession(r)
 
 	rows, err := db.Query(`
-		SELECT message, nicknamefrom, nicknameto, date FROM messages WHERE (nicknameto = ? AND nicknamefrom = ?) OR (nicknameto = ? AND nicknamefrom = ?)`, nicknameTo, nicknameFrom, nicknameFrom, nicknameTo)
+		SELECT message, nicknamefrom, nicknameto, date FROM messages WHERE (nicknameto = ? AND nicknamefrom = ?) OR (nicknameto = ? AND nicknamefrom = ?)
+		ORDER BY date DESC LIMIT ? OFFSET ?`, nicknameTo, nicknameFrom, nicknameFrom, nicknameTo, pageSizeNum, offset)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

@@ -74,24 +74,36 @@ export  function usersForChat() {
 }
 
 export function displayMessages(nicknameTo) {
-  fetch('/messages?nicknameTo=' + nicknameTo)
-  .then(response => response.json())
-  .then(messages => {  
-      const messageBox = document.getElementById("message-box");
+  const messageBox = document.getElementById("message-box");
+  const pageSize = 10;
+  let currentPage = 1;
 
-      if (messages && messages.length > 0) {
-          messages.forEach(message => {
-              messageBox.value += `${message.nicknamefrom}: ${message.message}\n`;
-          });
-      } else {
-          messageBox.value = "";
-      }
-  })
-  .catch(error => {
-      var formContainer = document.getElementById('formContainer');
-      var errorContainer = document.createElement('div');
-      errorContainer.className = 'message';
-      errorContainer.textContent = 'An error occurred while displaying messages: ' + error.message;
-      formContainer.appendChild(errorContainer);
+  function loadMessages(page) {
+    const url = `/messages?nicknameTo=${nicknameTo}&page=${page}&pageSize=${pageSize}`;
+    fetch(url)
+      .then(response => response.json())
+      .then(messages => {
+        if (messages && messages.length > 0) {
+          const newMessages = messages.map(message => `${message.nicknamefrom}: ${message.message}`);
+          const messagesToDisplay = newMessages.join("\n") + "\n";
+          messageBox.value = messagesToDisplay + messageBox.value;
+
+          if (page === 1) {
+            messageBox.scrollTop = messageBox.scrollHeight;
+          }
+        }
+      })
+      .catch(error => {
+        console.error('An error occurred while loading messages:', error);
+      });
+  }
+
+  loadMessages(currentPage);
+
+  messageBox.addEventListener('scroll', () => {
+    if (messageBox.scrollTop === 0) {
+      currentPage++;
+      loadMessages(currentPage);
+    }
   });
 }

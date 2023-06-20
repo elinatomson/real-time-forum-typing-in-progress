@@ -52,10 +52,9 @@ export function webSoc(nicknameTo, nicknameFrom) {
 
   // Function to handle the received message
   function handleMessage(message) {
-    //the message text is extracted from the message object and stored in the messageText variable.
+    const senderNickname = message.nicknamefrom;
     const messageText = message.message;
-    // Display the message in the textbox
-    messageBox.value += messageText + "\n";
+    messageBox.value += `${senderNickname}: ${messageText}\n`;
   }
 }
 
