@@ -79,27 +79,33 @@ export function displayMessages(nicknameTo) {
   let currentPage = 1;
 
   function loadMessages(page) {
-    const url = `/messages?nicknameTo=${nicknameTo}&page=${page}&pageSize=${pageSize}`;
-    fetch(url)
+    fetch(`/messages?nicknameTo=${nicknameTo}&page=${page}&pageSize=${pageSize}`)
       .then(response => response.json())
       .then(messages => {
         if (messages && messages.length > 0) {
           const newMessages = messages.map(message => `${message.nicknamefrom}: ${message.message}`);
-          const messagesToDisplay = newMessages.join("\n") + "\n";
-          messageBox.value = messagesToDisplay + messageBox.value;
+          const messagesToDisplay = newMessages.reverse().join("\n") + "\n"; //reverse the order of messages
+          messageBox.value = messageBox.value + messagesToDisplay; //append messages 
 
+          //if you are opening the chat, meaning it is the first page
           if (page === 1) {
+            //sets the scroll position to the bottom
             messageBox.scrollTop = messageBox.scrollHeight;
           }
         }
       })
       .catch(error => {
-        console.error('An error occurred while loading messages:', error);
+      var formContainer = document.getElementById('formContainer');
+      var errorContainer = document.createElement('div');
+      errorContainer.className = 'message';
+      errorContainer.textContent = error.message;
+      formContainer.appendChild(errorContainer);
       });
   }
 
   loadMessages(currentPage);
 
+  //reload the last 10 messages and when scrolled up to see more messages you will see 10 more and so on
   messageBox.addEventListener('scroll', () => {
     if (messageBox.scrollTop === 0) {
       currentPage++;
@@ -107,3 +113,4 @@ export function displayMessages(nicknameTo) {
     }
   });
 }
+
