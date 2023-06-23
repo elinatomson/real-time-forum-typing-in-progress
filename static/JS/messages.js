@@ -83,23 +83,23 @@ export function displayMessages(nicknameTo) {
       .then(response => response.json())
       .then(messages => {
         if (messages && messages.length > 0) {
-          const newMessages = messages.map(message => `${message.nicknamefrom}: ${message.message}`);
-          const messagesToDisplay = newMessages.reverse().join("\n") + "\n"; //reverse the order of messages
-          messageBox.value = messageBox.value + messagesToDisplay; //append messages 
+          const newMessages = messages.map(message => {
+            var formattedDate = new Date(message.date).toLocaleString();
+            //the way to display every message in the conversation history
+            return `${formattedDate} - ${message.nicknamefrom}: ${message.message}`;
+          });
+          const messagesToDisplay = newMessages.reverse().join("\n") + "\n"; //reverse the order of messages so the newest ones are at the bottom
+          messageBox.value = messageBox.value + messagesToDisplay; //append messages
 
           //if you are opening the chat, meaning it is the first page
           if (page === 1) {
-            //sets the scroll position to the bottom
+            //set the scroll position to the bottom
             messageBox.scrollTop = messageBox.scrollHeight;
           }
         }
       })
       .catch(error => {
-      var formContainer = document.getElementById('formContainer');
-      var errorContainer = document.createElement('div');
-      errorContainer.className = 'message';
-      errorContainer.textContent = error.message;
-      formContainer.appendChild(errorContainer);
+        console.error('An error occurred while loading messages:', error);
       });
   }
 

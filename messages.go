@@ -17,9 +17,10 @@ type Message struct {
 }
 
 type IncomingMessage struct {
-	Message      string `json:"message"`
-	NicknameFrom string `json:"nicknamefrom"`
-	NicknameTo   string `json:"nicknameto"`
+	Message      string    `json:"message"`
+	NicknameFrom string    `json:"nicknamefrom"`
+	NicknameTo   string    `json:"nicknameto"`
+	Date         time.Time `json:"date"`
 }
 
 var message Message

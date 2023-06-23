@@ -50,7 +50,7 @@ func WebsocketHandler(w http.ResponseWriter, r *http.Request) {
 			break
 		}
 		//Finally, it calls the handleMessage function, passing the recipient user's nickname and the message as parameters to handle the received message.
-		handleMessage(msg.NicknameTo, string(message))
+		handleMessage(r, msg.NicknameTo, string(message))
 	}
 
 	// Remove the WebSocket connection from the connections map when the connection is closed
@@ -60,21 +60,35 @@ func WebsocketHandler(w http.ResponseWriter, r *http.Request) {
 	mutex.Unlock()
 }
 
-func handleMessage(nickname, message string) {
+func handleMessage(r *http.Request, nickname, message string) {
 	// Check if the recipient user has an active WebSocket connection
 	mutex.Lock()
-	conn, found := connections[nickname]
+	recipientConn, recipientFound := connections[nickname]
 	mutex.Unlock()
 
-	//It checks if the recipient user's nickname exists in the connections map. If found, it retrieves the corresponding WebSocket connection.
-	if found {
+	// Check if the sender user has an active WebSocket connection
+	senderNickname, _ := nicknameFromSession(r)
+	mutex.Lock()
+	senderConn, senderFound := connections[senderNickname]
+	mutex.Unlock()
+
+	if recipientFound {
 		// Send the message to the recipient user's WebSocket connection
-		err := conn.WriteMessage(websocket.TextMessage, []byte(message))
+		err := recipientConn.WriteMessage(websocket.TextMessage, []byte(message))
 		if err != nil {
-			log.Println("Failed to write message:", err)
+			log.Println("Failed to write message to recipient:", err)
 		}
-		//If no active WebSocket connection is found for the given nickname, it logs a message indicating the same.
 	} else {
-		log.Println("No active WebSocket connection found for", nickname)
+		log.Println("No active WebSocket connection found for recipient:", nickname)
+	}
+
+	if senderFound {
+		// Send the message to the sender's WebSocket connection
+		err := senderConn.WriteMessage(websocket.TextMessage, []byte(message))
+		if err != nil {
+			log.Println("Failed to write message to sender:", err)
+		}
+	} else {
+		log.Println("No active WebSocket connection found for sender:", senderNickname)
 	}
 }

@@ -54,7 +54,8 @@ export function webSoc(nicknameTo, nicknameFrom) {
   function handleMessage(message) {
     const senderNickname = message.nicknamefrom;
     const messageText = message.message;
-    messageBox.value += `${senderNickname}: ${messageText}\n`;
+    var formattedDate = new Date(message.date).toLocaleString();
+    messageBox.value += `${formattedDate} - ${senderNickname}: ${messageText}\n`;
   }
 }
 
