@@ -24,6 +24,23 @@ export function webSoc(nicknameTo, nicknameFrom) {
   // Event listener for WebSocket connection close
   socket.addEventListener("close", () => {
     console.log("WebSocket connection closed.");
+    socket = null; // Set socket to null when the connection is closed
+  });
+
+  // Close the WebSocket connection when the user clicks outside the formContainer or the back to mainpage button
+  document.addEventListener("mousedown", (event) => {
+    const formContainer = document.getElementById("formContainer");
+    if (!formContainer.contains(event.target) && socket && socket.readyState === WebSocket.OPEN) {
+      socket.close();
+    }
+  });
+
+  // Event listener for the "Back to main page" button
+  const backButton = document.getElementById("back");
+  backButton.addEventListener("click", () => {
+    if (socket && socket.readyState === WebSocket.OPEN) {
+      socket.close();
+    }
   });
 
   // Event listener for WebSocket errors
