@@ -61,15 +61,8 @@ export  function usersForChat() {
         const userItem = document.createElement('div');
         userItem.className = 'user';
         userItem.textContent = user.nickname;
-        // Check if the user has unread messages
-        if (user.unreadMessages) {
-          const unreadIndicator = document.createElement('span');
-          unreadIndicator.className = 'unread-indicator';
-          unreadIndicator.textContent = '(Unread Messages)';
-          userItem.appendChild(unreadIndicator);
-        }
-
         userItem.dataset.user = user.nickname;
+        //CSS class to indicate the online/offline status
         userItem.classList.add(user.online ? 'online' : 'offline');
         userListContainer.appendChild(userItem);
       });
@@ -126,8 +119,8 @@ export function displayMessages(nicknameTo) {
   });
 }
 
-function messagesAsRead(nicknameTo) {
-  fetch(`/messages/markAsRead?nicknameTo=${nicknameTo}`)
+function messagesAsRead(nicknameFrom) {
+  fetch(`/messages/markAsRead?nicknameFrom=${nicknameFrom}`)
     .then(response => {
       if (response.ok) {
         console.log('All messages sent for the logged in user marked as read.');
@@ -140,27 +133,61 @@ function messagesAsRead(nicknameTo) {
     });
 }
 
-function unreadMessages() {
+function unreadMessageCount(count, senderNames) {
+  const unreadMessagesElement = document.getElementById("unread-messages");
+  unreadMessagesElement.innerHTML = `Unread messages: ${count} from: <span id="sender-names"></span>`;
+  
+  //to get sender name clickable
+  const senderNamesElement = document.getElementById("sender-names");
+  const senders = senderNames.split(", ");
+  senders.forEach((sender, index) => {
+    const senderSpan = document.createElement('span');
+    senderSpan.textContent = sender;
+    senderSpan.classList.add('user');
+    senderSpan.dataset.user = sender;
+    senderSpan.addEventListener('click', () => {
+      //to get the chat opened
+      handleUserClick(sender);
+      webSoc(sender);
+    });
+    senderNamesElement.appendChild(senderSpan);
+
+    if (index < senders.length - 1) {
+      //comma after each sender name except the last one
+      senderNamesElement.appendChild(document.createTextNode(', '));
+    }
+  });
+}
+
+export function unreadMessages() {
   fetch('/messages/unread')
     .then(response => response.json())
     .then(messages => {
       if (messages && messages.length > 0) {
+        const senders = []; //array to store sender nicknames
+
         messages.forEach(message => {
           const sender = message.nicknamefrom;
           const date = new Date(message.date).toLocaleString();
           const content = message.message;
 
-          // Display the unread message or handle it as required
-          console.log(`Unread Message - Sender: ${sender}, Date: ${date}, Message: ${content}`);
+          //push the sender name to the array if not already present
+          if (!senders.includes(sender)) {
+            senders.push(sender);
+          }
         });
+
+        const count = messages.length;
+        const senderNames = senders.join(", ");
+        //update the unread messages count with sender names
+        unreadMessageCount(count, senderNames); 
       } else {
-        // No unread messages
         console.log('No unread messages');
+        const unreadMessagesElement = document.getElementById('unread-messages');
+        unreadMessagesElement.textContent = 'No unread messages';
       }
     })
     .catch(error => {
       console.error('An error occurred while fetching unread messages:', error);
     });
 }
-
-unreadMessages();

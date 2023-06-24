@@ -1,4 +1,5 @@
 import { usersForChat } from './messages.js';
+import { unreadMessages } from './messages.js';
 import { loadPostPage } from './readpost.js';
 import { newPost } from './posting.js';
 import { logOut } from './logout.js';
@@ -25,6 +26,7 @@ export function loadUserPage() {
             <div id="mainpage">Fun Facts Forum</div>
           </div>
         </header>
+        <div id="unread-messages"></div>
         <div class="container">
           <div id="forum-users" class="forumusers">
             <div class="post-list-title">Forum users:</div>
@@ -47,6 +49,7 @@ export function loadUserPage() {
       usersForChat()
       newPost()
       logOut()
+      unreadMessages()
 
     //to see all posts on user mainpage
     fetch('/posts')

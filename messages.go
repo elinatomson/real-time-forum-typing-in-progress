@@ -127,8 +127,8 @@ func unreadMessages(w http.ResponseWriter, r *http.Request) {
 
 func messagesAsRead(w http.ResponseWriter, r *http.Request) {
 	nicknameTo, _ := nicknameFromSession(r)
-
-	_, err := db.Exec(`UPDATE messages SET read = 1 WHERE nicknameto = ? AND read = 0`, nicknameTo)
+	nicknameFrom := r.URL.Query().Get("nicknameFrom")
+	_, err := db.Exec(`UPDATE messages SET read = 1 WHERE nicknameto = ? AND nicknamefrom = ? AND read = 0`, nicknameTo, nicknameFrom)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
