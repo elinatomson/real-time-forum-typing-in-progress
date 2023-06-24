@@ -88,7 +88,6 @@ export function displayMessages(nicknameTo) {
   const messageBox = document.getElementById("message-box");
   const pageSize = 10;
   let currentPage = 1;
-  let allMessages = [];
 
   function loadMessages(page) {
     fetch(`/messages?nicknameTo=${nicknameTo}&page=${page}&pageSize=${pageSize}`)
@@ -140,3 +139,28 @@ function messagesAsRead(nicknameTo) {
       console.error('An error occurred while marking messages as read:', error);
     });
 }
+
+function unreadMessages() {
+  fetch('/messages/unread')
+    .then(response => response.json())
+    .then(messages => {
+      if (messages && messages.length > 0) {
+        messages.forEach(message => {
+          const sender = message.nicknamefrom;
+          const date = new Date(message.date).toLocaleString();
+          const content = message.message;
+
+          // Display the unread message or handle it as required
+          console.log(`Unread Message - Sender: ${sender}, Date: ${date}, Message: ${content}`);
+        });
+      } else {
+        // No unread messages
+        console.log('No unread messages');
+      }
+    })
+    .catch(error => {
+      console.error('An error occurred while fetching unread messages:', error);
+    });
+}
+
+unreadMessages();

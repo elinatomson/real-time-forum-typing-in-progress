@@ -102,6 +102,29 @@ func getMessages(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(messages)
 }
 
+func unreadMessages(w http.ResponseWriter, r *http.Request) {
+	nicknameTo, _ := nicknameFromSession(r)
+	rows, err := db.Query("SELECT message, nicknamefrom, nicknameto, date FROM messages WHERE read = 0 AND nicknameto = ?", nicknameTo)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	defer rows.Close()
+
+	//iterate over the query results and build the list of unread messages
+	var unreadMessages = []Message{}
+	for rows.Next() {
+		var msg Message
+		err := rows.Scan(&msg.Message, &msg.NicknameFrom, &msg.NicknameTo, &msg.Date)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		unreadMessages = append(unreadMessages, msg)
+	}
+	json.NewEncoder(w).Encode(unreadMessages)
+}
+
 func messagesAsRead(w http.ResponseWriter, r *http.Request) {
 	nicknameTo, _ := nicknameFromSession(r)
 
