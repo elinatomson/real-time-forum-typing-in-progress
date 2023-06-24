@@ -41,13 +41,16 @@ const SessionDB = `
 		nickname 			TEXT NOT NULL,
 		cookie				TEXT NOT NULL
 	)`
+
+// integer default 0 means that the message is unread. after reading it it becomes 1 indicating as read
 const MessageDB = `
 	CREATE TABLE IF NOT EXISTS messages (
 		messageID				INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
 		message 			TEXT,
 		nicknamefrom		TEXT,
 		nicknameto			TEXT,
-		date       			DATETIME
+		date       			DATETIME,
+		read          		INTEGER DEFAULT 0 
 )`
 
 func createDataBase(data string) error {

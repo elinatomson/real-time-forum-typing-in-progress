@@ -29,6 +29,7 @@ func main() {
 	http.HandleFunc("/users", getUsers)
 	http.HandleFunc("/message", messageing)
 	http.HandleFunc("/messages", getMessages)
+	http.HandleFunc("/messages/markAsRead", messagesAsRead)
 	http.HandleFunc("/logout", logOut)
 	http.HandleFunc("/create-post", posting)
 	http.HandleFunc("/commenting", commenting)

@@ -17,6 +17,12 @@ function handleUserClick(user) {
   </p>`
 ;
 
+  //to mark all previously received messages as read when the user starts typing a new message.
+  const messageInput = document.getElementById('message-input');
+  messageInput.addEventListener('click', () => {
+    messagesAsRead(user);
+  });
+
   displayMessages(user);
   //if you are logged in, then clicking on the Forum name, you will see the userPage as a mainpage
   var mainPage = document.getElementById('mainpage');
@@ -55,11 +61,16 @@ export  function usersForChat() {
         const userItem = document.createElement('div');
         userItem.className = 'user';
         userItem.textContent = user.nickname;
+        // Check if the user has unread messages
+        if (user.unreadMessages) {
+          const unreadIndicator = document.createElement('span');
+          unreadIndicator.className = 'unread-indicator';
+          unreadIndicator.textContent = '(Unread Messages)';
+          userItem.appendChild(unreadIndicator);
+        }
+
         userItem.dataset.user = user.nickname;
-
-        //CSS class to indicate the online/offline status
         userItem.classList.add(user.online ? 'online' : 'offline');
-
         userListContainer.appendChild(userItem);
       });
       attachUserClickListeners();
@@ -77,6 +88,7 @@ export function displayMessages(nicknameTo) {
   const messageBox = document.getElementById("message-box");
   const pageSize = 10;
   let currentPage = 1;
+  let allMessages = [];
 
   function loadMessages(page) {
     fetch(`/messages?nicknameTo=${nicknameTo}&page=${page}&pageSize=${pageSize}`)
@@ -88,13 +100,14 @@ export function displayMessages(nicknameTo) {
             //the way to display every message in the conversation history
             return `${formattedDate} - ${message.nicknamefrom}: ${message.message}`;
           });
-          const messagesToDisplay = newMessages.reverse().join("\n") + "\n"; //reverse the order of messages so the newest ones are at the bottom
-          messageBox.value = messageBox.value + messagesToDisplay; //append messages
+          const messagesToDisplay = newMessages.sort((a, b) => a.date - b.date).reverse().join("\n") + "\n"; //sord chronologically and reverse the order of messages so the newest ones are at the bottom
+          messageBox.value = messagesToDisplay + messageBox.value; // prepend messages
 
           //if you are opening the chat, meaning it is the first page
           if (page === 1) {
             //set the scroll position to the bottom
             messageBox.scrollTop = messageBox.scrollHeight;
+            messagesAsRead(nicknameTo);
           }
         }
       })
@@ -114,3 +127,16 @@ export function displayMessages(nicknameTo) {
   });
 }
 
+function messagesAsRead(nicknameTo) {
+  fetch(`/messages/markAsRead?nicknameTo=${nicknameTo}`)
+    .then(response => {
+      if (response.ok) {
+        console.log('All messages sent for the logged in user marked as read.');
+      } else {
+        console.error('Failed to mark messages as read.');
+      }
+    })
+    .catch(error => {
+      console.error('An error occurred while marking messages as read:', error);
+    });
+}

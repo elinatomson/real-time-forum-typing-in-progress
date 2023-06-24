@@ -101,3 +101,16 @@ func getMessages(w http.ResponseWriter, r *http.Request) {
 	// Send the messages as a JSON response
 	json.NewEncoder(w).Encode(messages)
 }
+
+func messagesAsRead(w http.ResponseWriter, r *http.Request) {
+	nicknameTo, _ := nicknameFromSession(r)
+
+	_, err := db.Exec(`UPDATE messages SET read = 1 WHERE nicknameto = ? AND read = 0`, nicknameTo)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprint(w, "All messages sent for the logged in user marked as read.")
+}
