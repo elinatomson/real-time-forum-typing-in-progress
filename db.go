@@ -15,7 +15,8 @@ const UserDB = `
 		firstname			TEXT,
 		lastname			TEXT,
 		email 				TEXT,
-		password			TEXT
+		password			TEXT,
+		last_message_date   TIMESTAMP DEFAULT NULL
 	)`
 const PostDB = `
 	CREATE TABLE IF NOT EXISTS posts (

@@ -60,6 +60,13 @@ func addMessage(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
+
+		// Update the last_message_date for the sender user
+		_, err = db.Exec("UPDATE users SET last_message_date = DATETIME('now') WHERE nickname = ?", message.NicknameFrom)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 	}
 
 	w.WriteHeader(http.StatusCreated)

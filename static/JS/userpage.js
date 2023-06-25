@@ -26,7 +26,7 @@ export function loadUserPage() {
             <div id="mainpage">Fun Facts Forum</div>
           </div>
         </header>
-        <div id="unread-messages"></div>
+        <div id="unread-messages" class="unread"></div>
         <div class="container">
           <div id="forum-users" class="forumusers">
             <div class="post-list-title">Forum users:</div>
