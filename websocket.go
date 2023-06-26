@@ -50,7 +50,7 @@ func WebsocketHandler(w http.ResponseWriter, r *http.Request) {
 			break
 		}
 		//Finally, it calls the handleMessage function, passing the recipient user's nickname and the message as parameters to handle the received message.
-		handleMessage(r, msg.NicknameTo, string(message))
+		handleMessage(r, msg.NicknameTo, msg.NicknameFrom, msg)
 	}
 
 	// Remove the WebSocket connection from the connections map when the connection is closed
@@ -60,21 +60,26 @@ func WebsocketHandler(w http.ResponseWriter, r *http.Request) {
 	mutex.Unlock()
 }
 
-func handleMessage(r *http.Request, nickname, message string) {
+func handleMessage(r *http.Request, nickname string, senderNickname string, message Message) {
 	// Check if the recipient user has an active WebSocket connection
 	mutex.Lock()
 	recipientConn, recipientFound := connections[nickname]
 	mutex.Unlock()
 
 	// Check if the sender user has an active WebSocket connection
-	senderNickname, _ := nicknameFromSession(r)
+	senderNickname, _ = nicknameFromSession(r)
 	mutex.Lock()
 	senderConn, senderFound := connections[senderNickname]
 	mutex.Unlock()
 
 	if recipientFound {
 		// Send the message to the recipient user's WebSocket connection
-		err := recipientConn.WriteMessage(websocket.TextMessage, []byte(message))
+		data, err := json.Marshal(message)
+		if err != nil {
+			log.Println("Failed to marshal message:", err)
+			return
+		}
+		err = recipientConn.WriteMessage(websocket.TextMessage, data)
 		if err != nil {
 			log.Println("Failed to write message to recipient:", err)
 		}
@@ -84,7 +89,12 @@ func handleMessage(r *http.Request, nickname, message string) {
 
 	if senderFound {
 		// Send the message to the sender's WebSocket connection
-		err := senderConn.WriteMessage(websocket.TextMessage, []byte(message))
+		data, err := json.Marshal(message)
+		if err != nil {
+			log.Println("Failed to marshal message:", err)
+			return
+		}
+		err = senderConn.WriteMessage(websocket.TextMessage, data)
 		if err != nil {
 			log.Println("Failed to write message to sender:", err)
 		}

@@ -69,10 +69,10 @@ export function webSoc(nicknameTo, nicknameFrom) {
 
   // Function to handle the received message
   function handleMessage(message) {
-    const senderNickname = message.nicknamefrom;
+    const senderNickname = message.nicknameFrom;
     const messageText = message.message;
-    var formattedDate = new Date(message.date).toLocaleString();
-    messageBox.value += `${formattedDate} - ${senderNickname}: ${messageText}\n`;
+    const formattedTime = new Date(message.date).toLocaleString()
+    messageBox.value += `${formattedTime} - ${senderNickname}: ${messageText}\n`;
   }
 }
 
@@ -84,13 +84,16 @@ export function sendMessage(message, nicknameTo, nicknameFrom) {
     return;
   }
 
+  const date = new Date(); // Current date and time
+
   //If the WebSocket connection is open, the code creates a data object that represents the message data to be sent to the server
   const data = {
     message: message,
     nicknamefrom: nicknameFrom,
-    nicknameto: nicknameTo
+    nicknameto: nicknameTo,
+    date: date
   };
-
+console.log(data.nicknamefrom)
   //it is sent to the server using socket.send().
   socket.send(JSON.stringify(data));
 

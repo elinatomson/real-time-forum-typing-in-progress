@@ -16,13 +16,6 @@ type Message struct {
 	Date         time.Time `json:"date"`
 }
 
-type IncomingMessage struct {
-	Message      string    `json:"message"`
-	NicknameFrom string    `json:"nicknamefrom"`
-	NicknameTo   string    `json:"nicknameto"`
-	Date         time.Time `json:"date"`
-}
-
 var message Message
 
 func messageing(w http.ResponseWriter, r *http.Request) {
@@ -36,39 +29,38 @@ func messageing(w http.ResponseWriter, r *http.Request) {
 }
 
 func addMessage(w http.ResponseWriter, r *http.Request) {
-	var incomingMessage IncomingMessage
 
-	err := json.NewDecoder(r.Body).Decode(&incomingMessage)
+	err := json.NewDecoder(r.Body).Decode(&message)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	message := Message{
-		Message:      incomingMessage.Message,
-		NicknameFrom: incomingMessage.NicknameFrom,
-		NicknameTo:   incomingMessage.NicknameTo,
+	message = Message{
+		Message:      message.Message,
+		NicknameFrom: message.NicknameFrom,
+		NicknameTo:   message.NicknameTo,
 		Date:         time.Now(),
 	}
 
 	message.NicknameFrom, _ = nicknameFromSession(r)
 
 	if message.Message != "" {
-		// Insert the message for the sender
+		//insert the message
 		_, err := db.Exec(`INSERT INTO messages (message, nicknamefrom, nicknameto, date) VALUES (?, ?, ?, ?)`, message.Message, message.NicknameFrom, message.NicknameTo, message.Date)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
-		// Update the last_message_date for the sender user
+		//update the last_message_date
 		_, err = db.Exec("UPDATE users SET last_message_date = DATETIME('now') WHERE nickname = ?", message.NicknameFrom)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 	}
-
+	fmt.Printf(message.NicknameFrom)
 	w.WriteHeader(http.StatusCreated)
 	fmt.Fprint(w, "Message sent successfully")
 }
