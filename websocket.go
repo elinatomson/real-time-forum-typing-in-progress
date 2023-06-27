@@ -71,7 +71,6 @@ func handleMessage(r *http.Request, nickname string, senderNickname string, mess
 	mutex.Lock()
 	senderConn, senderFound := connections[senderNickname]
 	mutex.Unlock()
-
 	if recipientFound {
 		// Send the message to the recipient user's WebSocket connection
 		data, err := json.Marshal(message)

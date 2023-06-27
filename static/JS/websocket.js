@@ -69,9 +69,13 @@ export function webSoc(nicknameTo, nicknameFrom) {
 
   // Function to handle the received message
   function handleMessage(message) {
-    const senderNickname = message.nicknameFrom;
+    let senderNickname = "you";
+    if (message.nicknameto === nicknameTo) {
+      senderNickname = "me";
+    }
+
     const messageText = message.message;
-    const formattedTime = new Date(message.date).toLocaleString()
+    const formattedTime = new Date(message.date).toLocaleString();
     messageBox.value += `${formattedTime} - ${senderNickname}: ${messageText}\n`;
   }
 }
