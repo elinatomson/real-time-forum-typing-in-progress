@@ -1,4 +1,5 @@
 import { showLogInForm } from './login.js';
+import { displayErrorMessage } from './errormessage.js';
 
 var registerButton = document.getElementById('register-button')
 registerButton.addEventListener('click', function(event) {
@@ -80,20 +81,12 @@ function submitRegistrationForm(nickname, age, gender, firstName, lastName, emai
   var passwordMatch = password === password_repeat;
 
   if (!nameLength || !passwordLength) {
-    var formContainer = document.getElementById('formContainer');
-    var errorMessage = document.createElement('div');
-    errorMessage.className = 'message';
-    errorMessage.textContent = 'Please check username and password criteria!';
-    formContainer.appendChild(errorMessage);
+    displayErrorMessage('Username and password have to be 5 letters long!');
     return;
   }
 
   if (!passwordMatch) {
-    var formContainer = document.getElementById('formContainer');
-    var errorMessage = document.createElement('div');
-    errorMessage.className = 'message';
-    errorMessage.textContent = 'Inserted passwords are not the same!';
-    formContainer.appendChild(errorMessage);
+    displayErrorMessage('Inserted passwords do not match!');
     return;
   }
 
@@ -111,7 +104,7 @@ function submitRegistrationForm(nickname, age, gender, firstName, lastName, emai
 }
 
 function sendUserData(userData) {
-  fetch('http://localhost:8080/register', {
+  fetch('/register', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
@@ -120,26 +113,18 @@ function sendUserData(userData) {
   })
   .then(response => {
     if (response.ok) {
-      showLogInForm(); //direct the user to log in
+      showLogInForm(); //directing the user to log in
     } else {
-      return response.text(); //reading response as text
+      return response.text(); 
     }
   })
   .then(errorMessage => {
     if (errorMessage) {
-        var formContainer = document.getElementById('formContainer');
-        var errorContainer = document.createElement('div');
-        errorContainer.className = 'message';
-        errorContainer.textContent = errorMessage;
-        formContainer.appendChild(errorContainer);
+      displayErrorMessage(errorMessage);
     }
   })
   .catch(error => {
-    var formContainer = document.getElementById('formContainer');
-    var errorContainer = document.createElement('div');
-    errorContainer.className = 'message';
-    errorContainer.textContent = error.message;
-    formContainer.appendChild(errorContainer);
+    displayErrorMessage(`An error occurred while registering: ${error.message}`);
   });
 }
 

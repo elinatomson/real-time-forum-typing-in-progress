@@ -1,4 +1,4 @@
-import { usersForChat } from './messages.js';
+import { usersForChat } from './users.js';
 import { unreadMessages } from './messages.js';
 import { loadPostPage } from './readpost.js';
 import { newPost } from './posting.js';

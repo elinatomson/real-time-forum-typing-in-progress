@@ -1,4 +1,4 @@
-package main
+package handlers
 
 import (
 	"database/sql"
@@ -33,7 +33,7 @@ func addCookie(w http.ResponseWriter, nickname string) {
 	}
 }
 
-func session(w http.ResponseWriter, r *http.Request) {
+func Sessions(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
 		decodeSession(w, r)
 	} else {

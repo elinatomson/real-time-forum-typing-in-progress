@@ -1,4 +1,4 @@
-package main
+package handlers
 
 import (
 	"database/sql"
@@ -54,7 +54,7 @@ const MessageDB = `
 		read          		INTEGER DEFAULT 0 
 )`
 
-func createDataBase(data string) error {
+func createDataBaseTable(data string) error {
 	stmt, err := db.Prepare(data)
 	if err != nil {
 		return err
@@ -63,11 +63,16 @@ func createDataBase(data string) error {
 	stmt.Close()
 	return nil
 }
-func allDataBases() {
+func AllDataBases() {
+	var err error
+	db, err = sql.Open("sqlite3", "data.db")
+	if err != nil {
+		panic(err.Error())
+	}
 	//create named tables
-	createDataBase(UserDB)
-	createDataBase(PostDB)
-	createDataBase(CommentDB)
-	createDataBase(SessionDB)
-	createDataBase(MessageDB)
+	createDataBaseTable(UserDB)
+	createDataBaseTable(PostDB)
+	createDataBaseTable(CommentDB)
+	createDataBaseTable(SessionDB)
+	createDataBaseTable(MessageDB)
 }

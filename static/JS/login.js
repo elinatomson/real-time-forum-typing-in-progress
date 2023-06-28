@@ -1,4 +1,5 @@
 import { loadUserPage } from './userpage.js';
+import { displayErrorMessage } from './errormessage.js';
 
 document.addEventListener("DOMContentLoaded", () => {
   var logIn = document.getElementById('login-button');
@@ -43,7 +44,7 @@ export function showLogInForm() {
   }
 
   function submitLogInForm(userData) {
-    fetch('http://localhost:8080/login', {
+    fetch('/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -54,23 +55,15 @@ export function showLogInForm() {
       if (response.ok) {
         loadUserPage(); //load the logged in user page
       } else {
-          return response.text(); //reading response as text
+          return response.text(); 
       }
     })
     .then(errorMessage => {
       if (errorMessage) {
-        var formContainer = document.getElementById('formContainer');
-        var errorContainer = document.createElement('div');
-        errorContainer.className = 'message';
-        errorContainer.textContent = errorMessage;
-        formContainer.appendChild(errorContainer);
+        displayErrorMessage(errorMessage);
       }
     })
     .catch(error => {
-      var formContainer = document.getElementById('formContainer');
-      var errorContainer = document.createElement('div');
-      errorContainer.className = 'message';
-      errorContainer.textContent = 'An error occurred while logging in: ' + error.message;
-      formContainer.appendChild(errorContainer);
+      displayErrorMessage(`An error occurred while logging in: ${error.message}`);
     });
   }

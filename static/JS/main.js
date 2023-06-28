@@ -1,12 +1,12 @@
 import { loadUserPage } from './userpage.js';
 
 //forum name clickable and directing to mainpage
-loadPage()
+loadPage();
 //when there is a matching cookie in the database, then the userpage is displayed as a mainpage
-compareCookieWithDatabase()
+compareCookieWithDatabase();
 
 function loadPage() {
-    var mainPage = document.getElementById('mainpage');
+    const mainPage = document.getElementById('mainpage');
     mainPage.addEventListener('click', function(event) {
         event.preventDefault();
         window.location.href = '/';
@@ -32,22 +32,23 @@ function getCookie(cname) {
 
 
 function compareCookieWithDatabase() {
-    var clientCookie = getCookie("sessionId");
+    const clientCookie = getCookie("sessionId");
 
     fetch("/session", {
-    method: "POST",
-    headers: {
-        'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ cookie: clientCookie })
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ cookie: clientCookie })
     })
-    .then((response) => response.text())
-    .then((result) => {
-        if (result === "Cookie matches!") {
-            loadUserPage(); //if the cookie matches with the one which is in the database, then clicking on the forum name the userpage is loaded
-        } 
-    })
-    .catch((error) => {
+        .then((response) => response.text())
+        .then((result) => {
+            if (result === "Cookie matches!") {
+                //if the cookie matches with the one which is in the database, then clicking on the forum name the userpage is loaded
+                loadUserPage(); 
+            } 
+        })
+        .catch((error) => {
         console.error("An error occurred:", error);
     });
 }

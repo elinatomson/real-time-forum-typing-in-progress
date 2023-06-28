@@ -1,4 +1,4 @@
-package main
+package handlers
 
 import (
 	"database/sql"
@@ -20,10 +20,8 @@ type UserData struct {
 	Password  string `json:"password"`
 }
 
-var userData []UserData
-
-func register(w http.ResponseWriter, r *http.Request) {
-	if r.Method == "POST" {
+func Register(w http.ResponseWriter, r *http.Request) {
+	if r.Method == http.MethodPost {
 		addUserData(w, r)
 	} else {
 		w.WriteHeader(http.StatusMethodNotAllowed)
@@ -52,25 +50,31 @@ func insertUserData(userData UserData) error {
 	//checking if nickname or email already exists
 	stmt := `SELECT email FROM users WHERE email = ?`
 	row := db.QueryRow(stmt, userData.Email)
-	err := row.Scan(&userData.Email)
+	var email string
+	err := row.Scan(&email)
 	if err != sql.ErrNoRows {
 		return errors.New("Email already taken")
 	}
-	stmt1 := `SELECT nickname FROM users WHERE nickname = ?`
-	row1 := db.QueryRow(stmt1, userData.Nickname)
-	err1 := row1.Scan(&userData.Nickname)
-	if err1 != sql.ErrNoRows {
+
+	stmt = `SELECT nickname FROM users WHERE nickname = ?`
+	row = db.QueryRow(stmt, userData.Nickname)
+	var nickname string
+	err = row.Scan(&nickname)
+	if err != sql.ErrNoRows {
 		return errors.New("Nickname already taken")
 	}
 
 	//hashing password
-	var hash []byte
-	hash, _ = bcrypt.GenerateFromPassword([]byte(userData.Password), bcrypt.DefaultCost)
+	hash, err := bcrypt.GenerateFromPassword([]byte(userData.Password), bcrypt.DefaultCost)
+	if err != nil {
+		return err
+	}
 
 	//inserting data do users table
-	_, err3 := db.Exec("INSERT INTO users(nickname, age, gender, firstname, lastname, email, password) VALUES(?, ?, ?, ?, ?, ?, ?)", userData.Nickname, userData.Age, userData.Gender, userData.FirstName, userData.LastName, userData.Email, hash)
-	if err3 != nil {
-		return err3
+	_, err = db.Exec("INSERT INTO users(nickname, age, gender, firstname, lastname, email, password) VALUES(?, ?, ?, ?, ?, ?, ?)",
+		userData.Nickname, userData.Age, userData.Gender, userData.FirstName, userData.LastName, userData.Email, hash)
+	if err != nil {
+		return err
 	}
 	return nil
 }

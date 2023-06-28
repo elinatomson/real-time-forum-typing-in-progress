@@ -1,13 +1,7 @@
 //This variable will hold the WebSocket connection object.
-let socket = null;
+let socket ;
 
 export function webSoc(nicknameTo, nicknameFrom) {
-  //checks if a WebSocket connection is already open (socket is not null and the readyState property is WebSocket.OPEN). 
-  if (socket && socket.readyState === WebSocket.OPEN) {
-    //If a connection is already open, the function returns early to avoid creating a duplicate connection.
-    return;
-  }
-
   //If there is no open WebSocket connection, the code creates a new WebSocket connection by instantiating a WebSocket object and passing the WebSocket URL as a parameter.
   socket = new WebSocket("ws://localhost:8080/ws");
 
@@ -21,17 +15,12 @@ export function webSoc(nicknameTo, nicknameFrom) {
     console.log("WebSocket connection established.");
   });
 
-  // Event listener for WebSocket connection close
-  socket.addEventListener("close", () => {
-    console.log("WebSocket connection closed.");
-    socket = null; // Set socket to null when the connection is closed
-  });
-
-  // Close the WebSocket connection when the user clicks outside the formContainer or the back to mainpage button
-  document.addEventListener("mousedown", (event) => {
+  // Close the WebSocket connection when the user clicks outside the formContainer 
+  document.addEventListener("click", (event) => {
     const formContainer = document.getElementById("formContainer");
     if (!formContainer.contains(event.target) && socket && socket.readyState === WebSocket.OPEN) {
       socket.close();
+      console.log("WebSocket connection closed.");
     }
   });
 
@@ -40,6 +29,7 @@ export function webSoc(nicknameTo, nicknameFrom) {
   backButton.addEventListener("click", () => {
     if (socket && socket.readyState === WebSocket.OPEN) {
       socket.close();
+      console.log("WebSocket connection closed.");
     }
   });
 

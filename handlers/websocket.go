@@ -1,4 +1,4 @@
-package main
+package handlers
 
 import (
 	"encoding/json"
@@ -15,7 +15,7 @@ var (
 	mutex       = sync.Mutex{}
 )
 
-func WebsocketHandler(w http.ResponseWriter, r *http.Request) {
+func Websocket(w http.ResponseWriter, r *http.Request) {
 	// Upgrade the HTTP connection to a WebSocket connection
 	// in order to enable full-duplex communication and support WebSocket-specific features, the HTTP connection needs to be upgraded to a WebSocket connection.
 	conn, err := upgrader.Upgrade(w, r, nil)

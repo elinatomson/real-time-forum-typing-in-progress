@@ -1,11 +1,12 @@
 package main
 
 import (
-	"database/sql"
 	"fmt"
 	"html/template"
 	"log"
 	"net/http"
+
+	"real-time-forum/handlers"
 
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -13,33 +14,25 @@ import (
 var tpl *template.Template
 
 func main() {
-	var err error
-	db, err = sql.Open("sqlite3", "data.db")
-	if err != nil {
-		panic(err.Error())
-	}
-	defer db.Close()
 	//creating all tables into the database
-	allDataBases()
+	handlers.AllDataBases()
 
-	http.HandleFunc("/", mainPage)
-	http.HandleFunc("/userpage", userPage)
-	http.HandleFunc("/register", register)
-	http.HandleFunc("/login", logIn)
-	http.HandleFunc("/users", getUsers)
-	http.HandleFunc("/message", messageing)
-	http.HandleFunc("/messages", getMessages)
-	http.HandleFunc("/messages/unread", unreadMessages)
-	http.HandleFunc("/messages/markAsRead", messagesAsRead)
-	http.HandleFunc("/logout", logOut)
-	http.HandleFunc("/create-post", posting)
-	http.HandleFunc("/commenting", commenting)
-	http.HandleFunc("/posts", displayPosts)
-	http.HandleFunc("/readpost", readPost)
-	http.HandleFunc("/session", session)
-
-	//new endpoint for live chat endpoint - maybe it should connect to handler
-	http.HandleFunc("/ws", WebsocketHandler)
+	http.HandleFunc("/", handlers.MainPage)
+	http.HandleFunc("/userpage", handlers.UserPage)
+	http.HandleFunc("/register", handlers.Register)
+	http.HandleFunc("/login", handlers.LogIn)
+	http.HandleFunc("/users", handlers.GetUsers)
+	http.HandleFunc("/message", handlers.Messageing)
+	http.HandleFunc("/messages", handlers.GetMessages)
+	http.HandleFunc("/messages/unread", handlers.UnreadMessages)
+	http.HandleFunc("/messages/markAsRead", handlers.MessagesAsRead)
+	http.HandleFunc("/logout", handlers.LogOut)
+	http.HandleFunc("/create-post", handlers.Posting)
+	http.HandleFunc("/commenting", handlers.Commenting)
+	http.HandleFunc("/posts", handlers.DisplayPosts)
+	http.HandleFunc("/readpost", handlers.ReadPost)
+	http.HandleFunc("/session", handlers.Sessions)
+	http.HandleFunc("/ws", handlers.Websocket)
 
 	fileServer := http.FileServer(http.Dir("./static/"))
 	http.Handle("/static/", http.StripPrefix("/static", fileServer))

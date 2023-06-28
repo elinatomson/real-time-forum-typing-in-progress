@@ -1,4 +1,4 @@
-package main
+package handlers
 
 import (
 	"encoding/json"
@@ -27,7 +27,7 @@ type Comment struct {
 	CommentDate     time.Time `json:"commentdate"`
 }
 
-func posting(w http.ResponseWriter, r *http.Request) {
+func Posting(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
 		addPost(w, r)
 	} else {
@@ -58,7 +58,7 @@ func addPost(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func commenting(w http.ResponseWriter, r *http.Request) {
+func Commenting(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
 		addComment(w, r)
 	} else {

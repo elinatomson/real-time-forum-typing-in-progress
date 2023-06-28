@@ -1,4 +1,4 @@
-package main
+package handlers
 
 import (
 	"encoding/json"
@@ -18,7 +18,7 @@ type Message struct {
 
 var message Message
 
-func messageing(w http.ResponseWriter, r *http.Request) {
+func Messageing(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
 		addMessage(w, r)
 	} else {
@@ -65,7 +65,7 @@ func addMessage(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, "Message sent successfully")
 }
 
-func getMessages(w http.ResponseWriter, r *http.Request) {
+func GetMessages(w http.ResponseWriter, r *http.Request) {
 	page := r.URL.Query().Get("page")
 	pageSize := r.URL.Query().Get("pageSize")
 	//convert page and pageSize to integers
@@ -101,7 +101,7 @@ func getMessages(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(messages)
 }
 
-func unreadMessages(w http.ResponseWriter, r *http.Request) {
+func UnreadMessages(w http.ResponseWriter, r *http.Request) {
 	nicknameTo, _ := nicknameFromSession(r)
 	rows, err := db.Query("SELECT message, nicknamefrom, nicknameto, date FROM messages WHERE read = 0 AND nicknameto = ?", nicknameTo)
 	if err != nil {
@@ -124,7 +124,7 @@ func unreadMessages(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(unreadMessages)
 }
 
-func messagesAsRead(w http.ResponseWriter, r *http.Request) {
+func MessagesAsRead(w http.ResponseWriter, r *http.Request) {
 	nicknameTo, _ := nicknameFromSession(r)
 	nicknameFrom := r.URL.Query().Get("nicknameFrom")
 	_, err := db.Exec(`UPDATE messages SET read = 1 WHERE nicknameto = ? AND nicknamefrom = ? AND read = 0`, nicknameTo, nicknameFrom)

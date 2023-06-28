@@ -1,11 +1,11 @@
-package main
+package handlers
 
 import (
 	"encoding/json"
 	"net/http"
 )
 
-func displayPosts(w http.ResponseWriter, r *http.Request) {
+func DisplayPosts(w http.ResponseWriter, r *http.Request) {
 	var allPosts []Post
 	var post Post
 

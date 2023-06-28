@@ -1,11 +1,11 @@
-package main
+package handlers
 
 import (
 	"encoding/json"
 	"net/http"
 )
 
-func readPost(w http.ResponseWriter, r *http.Request) {
+func ReadPost(w http.ResponseWriter, r *http.Request) {
 	id := r.URL.Query().Get("id")
 
 	var post Post
