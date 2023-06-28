@@ -1,9 +1,9 @@
 package handlers
 
 import (
+	"database/sql"
 	"encoding/json"
 	"net/http"
-	"time"
 )
 
 func GetUsers(w http.ResponseWriter, r *http.Request) {
@@ -22,28 +22,33 @@ func GetUsers(w http.ResponseWriter, r *http.Request) {
 		ORDER BY COALESCE(last_message.last_message_date, '1900-01-01') DESC, users.nickname ASC
 	`)
 	if err != nil {
-		panic(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
+	defer rows.Close()
 
 	users := make([]User, 0)
 
 	for rows.Next() {
-		var nickname string
-		var online bool
-		var lastMessageDate time.Time
-		rows.Scan(&nickname, &online, &lastMessageDate)
-
-		user := User{
-			Nickname:        nickname,
-			Online:          online,
-			LastMessageDate: lastMessageDate,
+		var user User
+		var lastMessageDate sql.NullTime
+		err := rows.Scan(&user.Nickname, &user.Online, &lastMessageDate)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
 		}
+
+		if lastMessageDate.Valid {
+			user.LastMessageDate = lastMessageDate.Time
+		}
+
 		users = append(users, user)
 	}
 
 	jsonData, err := json.Marshal(users)
 	if err != nil {
-		panic(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")

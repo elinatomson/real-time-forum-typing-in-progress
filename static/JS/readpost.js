@@ -1,4 +1,5 @@
 import { loadUserPage } from './userpage.js';
+import { displayErrorMessage } from './errormessage.js';
 
 export function loadPostPage(postID) {
     fetch(`/readpost?id=${postID}`)
@@ -58,36 +59,29 @@ export function loadPostPage(postID) {
             </p>
         `;
 
-        var commentForm = document.getElementById('commentform');
-        commentForm.addEventListener('submit', function(event) {
-            event.preventDefault();
-    
-            var comment = document.getElementById('comment').value;
-            var postID = data.post.ID
-    
-            submitComment(comment, postID);
-        });
+        const commentForm = document.getElementById('commentform');
+        commentForm.addEventListener('submit', event => submitComment(event, data));
+        
         //if you are logged in, then clicking on the Forum name, you will see the userPage as a mainpage
-        var mainPage = document.getElementById('mainpage');
-        mainPage.addEventListener('click', function(event) {
-            event.preventDefault();
-            loadUserPage();
-        });
+        const mainPage = document.getElementById('mainpage');
+        mainPage.addEventListener('click', loadUserPage);
     
         //by clicking on the "Back to main page" button, you will see the userPage as a mainpage
-        var backButton = document.getElementById('back');
-        backButton.addEventListener('click', function(event) {
-            event.preventDefault();
-            loadUserPage();
-        });
+        const backButton = document.getElementById('back');
+        backButton.addEventListener('click', loadUserPage);
     })
     .catch(error => {
-        console.error('An error occurred while loading the post:', error);
+        displayErrorMessage(`An error occurred while loading a post: ${error.message}`);
     });
 }
 
-function submitComment(comment, postID) {
-    var commentData = {
+function submitComment(event, data) {
+    event.preventDefault();
+
+    const comment = document.getElementById('comment').value;
+    const postID = data.post.ID
+
+    const commentData = {
         comment: comment,
         postID: postID,
     };
@@ -107,23 +101,15 @@ function sendCommentData(commentData) {
         if (response.ok) {
             loadUserPage() //sending user to the userPage which is in this case as a mainpage
         } else {
-            return response.text(); //reading response as text
+            return response.text(); 
         }
     })
     .then(errorMessage => {
         if (errorMessage) {
-            var formContainer = document.getElementById('formContainer');
-            var errorContainer = document.createElement('div');
-            errorContainer.className = 'message';
-            errorContainer.textContent = errorMessage;
-            formContainer.appendChild(errorContainer);
+            displayErrorMessage(errorMessage);
         }
     })
     .catch(error => {
-        var formContainer = document.getElementById('formContainer');
-        var errorContainer = document.createElement('div');
-        errorContainer.className = 'message';
-        errorContainer.textContent = error.message;
-        formContainer.appendChild(errorContainer);
+        displayErrorMessage(`An error occurred while posting a comment: ${error.message}`);
     });
 }

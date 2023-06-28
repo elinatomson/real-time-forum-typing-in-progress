@@ -1,5 +1,6 @@
 import { handleUserClick } from './messages.js';
 import { webSoc } from './websocket.js';
+import { displayErrorMessage } from './errormessage.js';
 
 export function usersForChat() {
 	fetch('/users')
@@ -31,11 +32,7 @@ export function usersForChat() {
 			attachUserClickListeners();
 		})
 		.catch(error => {
-			var formContainer = document.getElementById('formContainer');
-			var errorContainer = document.createElement('div');
-			errorContainer.className = 'message';
-			errorContainer.textContent = error.message;
-			formContainer.appendChild(errorContainer);
+			displayErrorMessage(`An error occurred while displaying users: ${error.message}`);
 	});
 }
 
@@ -45,6 +42,6 @@ function attachUserClickListeners() {
       user.addEventListener('click', () => {
         handleUserClick(user.dataset.user);
         webSoc(user.dataset.user)
-      });
+      	});
     });
-  }
+}

@@ -29,12 +29,12 @@ func addCookie(w http.ResponseWriter, nickname string) {
 	http.SetCookie(w, &cookie)
 	_, err := db.Exec(`INSERT INTO sessions (nickname, cookie)  VALUES(?, ?)	`, nickname, uuid.String())
 	if err != nil {
-		return
+		log.Println(err)
 	}
 }
 
 func Sessions(w http.ResponseWriter, r *http.Request) {
-	if r.Method == "POST" {
+	if r.Method == http.MethodPost {
 		decodeSession(w, r)
 	} else {
 		w.WriteHeader(http.StatusMethodNotAllowed)
@@ -64,12 +64,10 @@ func getCookieFromSession(w http.ResponseWriter, session Session) error {
 	var storedCookie string
 	err := row.Scan(&storedCookie)
 	if err != nil {
+		log.Println(err)
 		fmt.Fprintf(w, "Cookie does not match!")
+		return nil
 	}
-
-	fmt.Println(session.Cookie)
-	fmt.Println(storedCookie)
-
 	// Compare the client-side cookie with the stored cookie
 	if session.Cookie == storedCookie {
 		fmt.Fprintf(w, "Cookie matches!")
@@ -83,7 +81,6 @@ func getCookieFromSession(w http.ResponseWriter, session Session) error {
 func deleteSession(r *http.Request) error {
 	cookie, err := r.Cookie("sessionId")
 	if err != nil {
-		fmt.Println("theres no cookie to be found")
 		if err == http.ErrNoCookie {
 			return nil
 		}
@@ -110,17 +107,22 @@ func nicknameFromSession(r *http.Request) (string, error) {
 	if err != nil {
 		return "", err
 	}
+	stmt := `SELECT nickname FROM sessions WHERE cookie = ?`
+	row := db.QueryRow(stmt, uuid.String())
 	var nickname string
-	err = db.QueryRow(`SELECT nickname FROM sessions WHERE cookie = ?`, uuid.String()).Scan(&nickname)
+	err = row.Scan(&nickname)
 	if err != nil {
 		return "", err
 	}
+
 	return nickname, nil
 }
 
 func sessionExists(db *sql.DB, nickname string) bool {
-	sqlStmt := `SELECT nickname FROM sessions WHERE nickname = ?`
-	err := db.QueryRow(sqlStmt, nickname).Scan(&nickname)
+	stmt := `SELECT nickname FROM sessions WHERE nickname = ?`
+	row := db.QueryRow(stmt, nickname)
+	var storedNickname string
+	err := row.Scan(&storedNickname)
 	if err != nil {
 		if err != sql.ErrNoRows {
 			log.Print(err)
@@ -146,10 +148,13 @@ func checkSession(w http.ResponseWriter, r *http.Request) (int, error) {
 	if err != nil {
 		return 0, err
 	}
+	stmt := `SELECT nickname FROM sessions WHERE cookie = ?`
+	row := db.QueryRow(stmt, uuid.String())
 	var nickname string
-	err = db.QueryRow(`SELECT nickname FROM sessions WHERE cookie = ?`, uuid.String()).Scan(&nickname)
+	err = row.Scan(&nickname)
 	if err != nil {
 		return 0, err
 	}
+
 	return 1, nil
 }

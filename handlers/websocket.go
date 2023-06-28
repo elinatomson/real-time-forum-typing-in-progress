@@ -24,7 +24,11 @@ func Websocket(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// Get the user's nickname from the request
-	nickname, _ := nicknameFromSession(r)
+	nickname, err := nicknameFromSession(r)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 
 	// Add the WebSocket connection to the connections map
 	//map is used to maintain active WebSocket connections.
@@ -50,7 +54,7 @@ func Websocket(w http.ResponseWriter, r *http.Request) {
 			break
 		}
 		//Finally, it calls the handleMessage function, passing the recipient user's nickname and the message as parameters to handle the received message.
-		handleMessage(r, msg.NicknameTo, msg.NicknameFrom, msg)
+		handleMessage(r, w, msg.NicknameTo, msg.NicknameFrom, msg)
 	}
 
 	// Remove the WebSocket connection from the connections map when the connection is closed
@@ -60,14 +64,19 @@ func Websocket(w http.ResponseWriter, r *http.Request) {
 	mutex.Unlock()
 }
 
-func handleMessage(r *http.Request, nickname string, senderNickname string, message Message) {
+func handleMessage(r *http.Request, w http.ResponseWriter, nickname string, senderNickname string, message Message) {
 	// Check if the recipient user has an active WebSocket connection
 	mutex.Lock()
 	recipientConn, recipientFound := connections[nickname]
 	mutex.Unlock()
 
 	// Check if the sender user has an active WebSocket connection
-	senderNickname, _ = nicknameFromSession(r)
+	senderNickname, err := nicknameFromSession(r)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
 	mutex.Lock()
 	senderConn, senderFound := connections[senderNickname]
 	mutex.Unlock()

@@ -17,15 +17,17 @@ func DisplayPosts(w http.ResponseWriter, r *http.Request) {
 	defer rows.Close()
 
 	for rows.Next() {
-		err := rows.Scan(&post.ID, &post.Title, &post.Content, &post.Nickname, &post.Date, &post.Movies, &post.Serials, &post.Realityshows)
+		err := rows.Scan(&post.ID, &post.Title, &post.Content, &post.Nickname, &post.Date, &post.Movies, &post.Serials, &post.RealityShows)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 		allPosts = append(allPosts, post)
 	}
-	//send the posts as a JSON response
-	json.NewEncoder(w).Encode(allPosts)
+	w.Header().Set("Content-Type", "application/json")
+	err = json.NewEncoder(w).Encode(allPosts)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 }
-
-//TO-DO: check if all local code is ok

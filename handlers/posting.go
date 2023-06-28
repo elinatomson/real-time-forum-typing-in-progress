@@ -13,10 +13,9 @@ type Post struct {
 	Content      string    `json:"content"`
 	Movies       string    `json:"movies"`
 	Serials      string    `json:"serials"`
-	Realityshows string    `json:"realityshows"`
+	RealityShows string    `json:"realityshows"`
 	Date         time.Time `json:"date"`
 	Nickname     string    `json:"nickname"`
-	Comments     []Comment
 }
 
 type Comment struct {
@@ -28,7 +27,7 @@ type Comment struct {
 }
 
 func Posting(w http.ResponseWriter, r *http.Request) {
-	if r.Method == "POST" {
+	if r.Method == http.MethodPost {
 		addPost(w, r)
 	} else {
 		w.WriteHeader(http.StatusMethodNotAllowed)
@@ -46,11 +45,15 @@ func addPost(w http.ResponseWriter, r *http.Request) {
 	}
 
 	post.Date = time.Now()
-
-	var nickname, _ = nicknameFromSession(r)
+	nickname, err := nicknameFromSession(r)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 
 	if post.Title != "" && post.Content != "" {
-		_, err := db.Exec(`INSERT INTO posts (title, content, category1, category2, category3, date, nickname) VALUES (?, ?, ?, ?, ?, ?, ?)`, post.Title, post.Content, post.Movies, post.Serials, post.Realityshows, post.Date, nickname)
+		_, err := db.Exec(`INSERT INTO posts (title, content, category1, category2, category3, date, nickname) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+			post.Title, post.Content, post.Movies, post.Serials, post.RealityShows, post.Date, nickname)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -59,7 +62,7 @@ func addPost(w http.ResponseWriter, r *http.Request) {
 }
 
 func Commenting(w http.ResponseWriter, r *http.Request) {
-	if r.Method == "POST" {
+	if r.Method == http.MethodPost {
 		addComment(w, r)
 	} else {
 		w.WriteHeader(http.StatusMethodNotAllowed)
@@ -78,15 +81,18 @@ func addComment(w http.ResponseWriter, r *http.Request) {
 
 	comment.CommentDate = time.Now()
 	id := r.URL.Query().Get("id")
-	var nickname, _ = nicknameFromSession(r)
+	nickname, err := nicknameFromSession(r)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 
 	if comment.Comment != "" {
-		_, err := db.Exec(`INSERT INTO comments (comment, date, nickname, postID) VALUES (?, ?, ?, ?)`, comment.Comment, comment.CommentDate, nickname, id)
+		_, err := db.Exec(`INSERT INTO comments (comment, date, nickname, postID) VALUES (?, ?, ?, ?)`,
+			comment.Comment, comment.CommentDate, nickname, id)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		//to show the same post page with added comment
-		//http.Redirect(w, r, r.Header.Get("Referer"), http.StatusFound)
 	}
 }

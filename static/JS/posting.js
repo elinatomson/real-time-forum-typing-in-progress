@@ -1,11 +1,9 @@
 import { loadUserPage } from './userpage.js';
+import { displayErrorMessage } from './errormessage.js';
 
 export function newPost() {
-    var newPost = document.getElementById('newpost');
-    newPost.addEventListener('click', function(event) {
-        event.preventDefault();
-        showNewPostForm();
-    });
+    var newPostButton = document.getElementById('newpost');
+    newPostButton.addEventListener('click', showNewPostForm);
 }
 
 function showNewPostForm() {
@@ -37,48 +35,38 @@ function showNewPostForm() {
     </p>
     `;
 
-    var newPostForm = document.getElementById('newpostform');
-    newPostForm.addEventListener('submit', function(event) {
-        event.preventDefault();
-
-        var title = document.getElementById('title').value;
-        var content = document.getElementById('content').value;
-        var movies = document.getElementById('movies').value;
-        var serials = document.getElementById('serials').value;
-        var realityshows = document.getElementById('realityshows').value;
-
-        submitNewPostForm(title, content, movies, serials, realityshows);
-    });
+    const newPostForm = document.getElementById('newpostform');
+    newPostForm.addEventListener('submit', newPostFormSubmit);
 
     //if you are logged in, then clicking on the Forum name, you will see the userPage as a mainpage
-    var mainPage = document.getElementById('mainpage');
-    mainPage.addEventListener('click', function(event) {
-        event.preventDefault();
-        loadUserPage();
-    });
+    const mainPage = document.getElementById('mainpage');
+    mainPage.addEventListener('click', loadUserPage);
 
     //by clicking on the "Back to main page" button, you will see the userPage as a mainpage
-    var backButton = document.getElementById('back');
-    backButton.addEventListener('click', function(event) {
-        event.preventDefault();
-        loadUserPage();
-    });
+    const backButton = document.getElementById('back');
+    backButton.addEventListener('click', loadUserPage);
 }
 
-function submitNewPostForm(title, content, movies, serials, realityshows) {
-    var postData = {
+function newPostFormSubmit(event) {
+    event.preventDefault();
+
+    const title = document.getElementById('title').value;
+    const content = document.getElementById('content').value;
+    
+    const postData = {
         title: title,
         content: content,
-    };
+      };
+
     //checking if a category is selected and add it to the postData object
     if (document.getElementById('movies').checked) {
-        postData.movies = document.getElementById('movies').value;
+       postData.movies = document.getElementById('movies').value;
     }
     if (document.getElementById('serials').checked) {
-        postData.serials = document.getElementById('serials').value;
+      postData.serials = document.getElementById('serials').value;
     }
     if (document.getElementById('realityshows').checked) {
-        postData.realityshows = document.getElementById('realityshows').value;
+      postData.realityshows = document.getElementById('realityshows').value;
     }
 
     sendPostData(postData)
@@ -95,25 +83,17 @@ function sendPostData (postData) {
     })
     .then(response => {
         if (response.ok) {
-            loadUserPage() //sending user to the userPage which is in this case as a mainpage
+            loadUserPage() 
         } else {
-            return response.text(); //reading response as text
+            return response.text(); 
         }
     })
     .then(errorMessage => {
         if (errorMessage) {
-            var formContainer = document.getElementById('formContainer');
-            var errorContainer = document.createElement('div');
-            errorContainer.className = 'message';
-            errorContainer.textContent = errorMessage;
-            formContainer.appendChild(errorContainer);
+            displayErrorMessage(errorMessage);
         }
     })
     .catch(error => {
-        var formContainer = document.getElementById('formContainer');
-        var errorContainer = document.createElement('div');
-        errorContainer.className = 'message';
-        errorContainer.textContent = error.message;
-        formContainer.appendChild(errorContainer);
+        displayErrorMessage(`An error occurred while posting: ${error.message}`);
     });
 }

@@ -1,3 +1,5 @@
+import { displayErrorMessage } from './errormessage.js';
+
 export function logOut() {
     var logout = document.getElementById('logout-button');
     logout.addEventListener('click', function(event) {
@@ -7,7 +9,7 @@ export function logOut() {
 }
 
 function loggingOut() {
-    fetch('http://localhost:8080/logout', {
+    fetch('/logout', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -22,27 +24,15 @@ function loggingOut() {
     })
     .then(errorMessage => { //to handle the error message received from the previous .then() in case the response was not successful
         if (errorMessage) {
-            var formContainer = document.getElementById('formContainer');
-            var errorContainer = document.createElement('div'); //creating an error container element and appending error message to the form container.
-            errorContainer.className = 'message';
-            errorContainer.textContent = errorMessage;
-            formContainer.appendChild(errorContainer);
+            displayErrorMessage(errorMessage);
         }
     })
     .catch(error => { //to handle any other errors that might occur during the fetch request or any of the .then() functions
-        var formContainer = document.getElementById('formContainer');
-        var errorContainer = document.createElement('div');
-        errorContainer.className = 'message';
-        errorContainer.textContent = error.message;
-        formContainer.appendChild(errorContainer);
+        displayErrorMessage(`An error occurred while logging out: ${error.message}`);
     });
 }
 
-function showLoggedOutMessage(html) {
-   //logout HTML content
-   var contentContainer = document.createElement('div');
-   contentContainer.innerHTML = html;
-
+function showLoggedOutMessage() {
    var modifiedHTML = `
    <header class="header">
      <div class="heading">
@@ -60,9 +50,8 @@ function showLoggedOutMessage(html) {
    </footer>
  `;
 
-    document.body.innerHTML = modifiedHTML; //replacing entire document body with the modified HTML structure
-    document.body.appendChild(contentContainer); //adding user-specific content to the document body
-
+    document.body.innerHTML = modifiedHTML; 
+    
     var mainPage2 = document.getElementById('main-page2');
     mainPage2.addEventListener('click', function(event) {
         event.preventDefault();

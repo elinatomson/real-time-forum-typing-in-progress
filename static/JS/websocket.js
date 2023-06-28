@@ -87,7 +87,7 @@ export function sendMessage(message, nicknameTo, nicknameFrom) {
     nicknameto: nicknameTo,
     date: date
   };
-console.log(data.nicknamefrom)
+
   //it is sent to the server using socket.send().
   socket.send(JSON.stringify(data));
 
@@ -108,10 +108,10 @@ console.log(data.nicknamefrom)
     })
     .then(errorMessage => {
       if (errorMessage) {
-        console.error("Error sending message:", errorMessage);
+        displayErrorMessage(errorMessage);
       }
     })
     .catch(error => {
-      console.error("An error occurred while sending messages:", error);
+			displayErrorMessage(`An error occurred while sending message: ${error.message}`);
     });
 }
