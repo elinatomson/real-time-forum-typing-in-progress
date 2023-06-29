@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"sync"
@@ -76,7 +77,7 @@ func handleMessage(r *http.Request, w http.ResponseWriter, nickname string, send
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
+	fmt.Printf("senderNickname from nicknameFromSession:%s\n", senderNickname)
 	mutex.Lock()
 	senderConn, senderFound := connections[senderNickname]
 	mutex.Unlock()

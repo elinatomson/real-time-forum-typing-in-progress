@@ -2,6 +2,10 @@
 let socket ;
 
 export function webSoc(nicknameTo, nicknameFrom) {
+  console.log("Value of nicknameFrom in beginning of webSoc:", nicknameFrom)
+  console.log("Value of nicknameTo in beginning of webSoc:", nicknameTo)
+
+
   //If there is no open WebSocket connection, the code creates a new WebSocket connection by instantiating a WebSocket object and passing the WebSocket URL as a parameter.
   socket = new WebSocket("ws://localhost:8080/ws");
 
@@ -51,6 +55,7 @@ export function webSoc(nicknameTo, nicknameFrom) {
     event.preventDefault(); // Prevent page reload
     //The content of the message input field is retrieved and stored in the message variable.
     const message = messageInput.value;
+    console.log("Value of nicknameFrom in sendButton eventlistener:", nicknameFrom)
     // Send the message, sender and recipient to the server
     sendMessage(message, nicknameTo, nicknameFrom);
     // After sending the message, the content of the message input field is cleared
@@ -58,10 +63,16 @@ export function webSoc(nicknameTo, nicknameFrom) {
   });
 
   // Function to handle the received message
+
+  // TO-DO you and me to sender and receiver
   function handleMessage(message) {
-    let senderNickname = "you";
+    let senderNickname = nicknameTo;
+    console.log("Value of message.nicknameto:", message.nicknameto)
+    console.log("Value of nicknameto:", nicknameTo)
+    console.log("Value of nicknameFrom:", nicknameFrom)
+
     if (message.nicknameto === nicknameTo) {
-      senderNickname = "me";
+      senderNickname = nicknameFrom;
     }
 
     const messageText = message.message;

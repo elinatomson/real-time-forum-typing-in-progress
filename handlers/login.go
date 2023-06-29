@@ -45,7 +45,7 @@ func logInUser(w http.ResponseWriter, r *http.Request) {
 
 func checkUser(w http.ResponseWriter, user User) error {
 	if user.Nickname == "" || user.Password == "" {
-		return errors.New("Please insert nickname and password!")
+		return errors.New("Please insert nickname and password")
 	}
 
 	if sessionExists(db, user.Nickname) {
@@ -65,7 +65,7 @@ func checkUser(w http.ResponseWriter, user User) error {
 
 	err = bcrypt.CompareHashAndPassword([]byte(hash), []byte(user.Password))
 	if err != nil {
-		return errors.New("Nickname or password is not correct!")
+		return errors.New("Nickname or password is not correct")
 	}
 	addCookie(w, user.Nickname)
 	return nil

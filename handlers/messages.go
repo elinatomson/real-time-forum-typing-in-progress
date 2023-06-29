@@ -35,7 +35,6 @@ func addMessage(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-
 	message = Message{
 		Message:      message.Message,
 		NicknameFrom: message.NicknameFrom,
@@ -44,7 +43,6 @@ func addMessage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	message.NicknameFrom, _ = nicknameFromSession(r)
-
 	if message.Message != "" {
 		//insert the message
 		_, err := db.Exec(`INSERT INTO messages (message, nicknamefrom, nicknameto, date) VALUES (?, ?, ?, ?)`, message.Message, message.NicknameFrom, message.NicknameTo, message.Date)
@@ -60,7 +58,7 @@ func addMessage(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	fmt.Printf(message.NicknameFrom)
+	fmt.Printf(message.NicknameFrom) //this print and hence gets the correct Nickname aka current user.
 	w.WriteHeader(http.StatusCreated)
 	fmt.Fprint(w, "Message sent successfully")
 }
