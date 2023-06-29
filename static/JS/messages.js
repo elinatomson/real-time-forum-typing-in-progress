@@ -2,7 +2,6 @@ import { webSoc } from './websocket.js';
 import { loadUserPage } from './userpage.js';
  
 export function handleUserClick(user) {
-  console.log("Value of nicknameFrom:", user);
   const formContainer = document.getElementById('formContainer');
   formContainer.innerHTML = 
   `Chat with ${user}
@@ -37,7 +36,6 @@ export function handleUserClick(user) {
       event.preventDefault();
       loadUserPage(); //TODO! if you click it for the first time, then everything in the userpage is somehow dublicated. 
   });
-  console.log("Value of nicknameFrom:", user);
 }
 
 export function displayMessages(nicknameTo) {

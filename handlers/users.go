@@ -3,7 +3,6 @@ package handlers
 import (
 	"database/sql"
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"sort"
 	"time"
@@ -14,16 +13,18 @@ func GetUsers(w http.ResponseWriter, r *http.Request) {
 	//users must be organized by the last message sent. If the user is new and does not present messages you must organize it in alphabetic order.
 	//so taking into account the last_message_date from users table and sorting is in messages.js file in usersForChat function
 	//also comparing with excisting sessions to show the user online or offline
-	currentUser, _ := nicknameFromSession(r)
+	currentUser, err := nicknameFromSession(r)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 
-	fmt.Printf("currentUser: %v\n", currentUser)
 	rows, err := db.Query(`
 	SELECT users.nickname, (CASE WHEN sessions.nickname IS NULL THEN FALSE ELSE TRUE END) AS online, MAX(messages.date) AS last_message_date
 	FROM users
 	LEFT JOIN sessions ON users.nickname = sessions.nickname
 	LEFT JOIN messages ON (users.nickname = messages.nicknamefrom OR users.nickname = messages.nicknameto)
 		AND (messages.nicknamefrom = ? OR messages.nicknameto = ?)
-	WHERE users.nickname <> ?
 	GROUP BY users.nickname
 	ORDER BY COALESCE(last_message_date, '1900-01-01') DESC, users.nickname ASC
 `, currentUser, currentUser, currentUser)
@@ -73,6 +74,14 @@ func GetUsers(w http.ResponseWriter, r *http.Request) {
 	}
 
 	SortUsers(users)
+
+	//add the current user's nickname to the response
+	for i := range users {
+		if users[i].Nickname == currentUser {
+			users[i].CurrentUser = true
+			break
+		}
+	}
 
 	jsonData, err := json.Marshal(users)
 	if err != nil {

@@ -15,6 +15,7 @@ type User struct {
 	Password        string    `json:"password"`
 	Online          bool      `json:"online"`
 	LastMessageDate time.Time `json:"last_message_date"`
+	CurrentUser     bool      `json:"currentUser"`
 }
 
 func LogIn(w http.ResponseWriter, r *http.Request) {

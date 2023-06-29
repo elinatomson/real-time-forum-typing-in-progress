@@ -58,7 +58,6 @@ func addMessage(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	fmt.Printf(message.NicknameFrom) //this print and hence gets the correct Nickname aka current user.
 	w.WriteHeader(http.StatusCreated)
 	fmt.Fprint(w, "Message sent successfully")
 }
