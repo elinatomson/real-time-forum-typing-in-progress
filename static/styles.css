@@ -120,6 +120,7 @@ a {
     padding-bottom: 1%;
     border: 1px solid;
     width: 100%;
+    cursor: pointer;
 }
 
 .post:hover{
@@ -186,33 +187,14 @@ a {
 .dropdown:hover .dropbtn {
     background-color: #17252A;
 }
-  
-.filter {
-    float: right;
-    padding: 1%;
-    margin-right: 15%;
-}
-
-.filter-button {
-    border: none;
-    color: white;
-    background-color:#2B7A78;
-    font-family: 'Gruppo', cursive;
-    font-size: 20px;
-    cursor: pointer;
-}
-
-.filter-button:hover {
-    background-color: #17252A;
-    color: white;
-    transition: 1s;
-}
  
 .input {
     border: none;
     color:#17252A;
     font-size: 20px;
     font-family: 'Gruppo', cursive;
+    padding: 5px 10px 5px 10px;
+    outline:none
 }
 
 .align {
@@ -250,50 +232,6 @@ a {
     font-size: 30px;
     font-family: 'Gruppo', cursive;
     text-align: center;
-}
-
-.like{
-	width: 40px;
-	height: 40px;
-	margin: 0 auto;
-	border-radius: 50%;
-	color: rgba(0,150,136 ,1);
-	background-color:white;
-	border-color: rgba(0,150,136 ,1);
-	border-width: 1px;
-	font-size: 20px;
-    margin-top: 10px;
-}
-
-.like:focus {
-    background-color: rgba(0,150,136 ,1);
-    color: white;
-}
-
-.dislike{
-	width: 40px;
-	height: 40px;
-	margin: 0 auto;
-	border-radius: 50%;
-	color: rgba(255,82,82 ,1);
-	background-color: white;
-	border-color: rgba(255,82,82 ,1);
-	border-width: 1px;
-	font-size: 20px;
-}
-
-.dislike:focus {
-    background-color:  rgba(255,82,82 ,1);
-    color: white;
-}
-
-.likecount {
-    border: none;
-    color: white;
-    background-color: #3AAfA9;
-    font-family: 'Gruppo', cursive;
-    font-size: 20px;
-    width: 1%;
 }
 
 .radio {
@@ -373,3 +311,29 @@ a {
     font-size: 20px;
     margin-top: 1%;
 }
+
+.messagebox {
+    background-color: #3AAfA9;
+    border: solid, 1px;
+    border-color: white;
+    font-family: 'Gruppo', cursive;
+    font-size: 20px;
+    color: white;
+    outline: none
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background-color: white;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background-color: #2B7A78;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: #17252A;
+  }

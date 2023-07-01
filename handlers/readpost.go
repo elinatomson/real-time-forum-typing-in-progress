@@ -54,9 +54,7 @@ func ReadPost(w http.ResponseWriter, r *http.Request) {
 		Comments: allComments,
 	}
 
-	//set the response content type to JSON
 	w.Header().Set("Content-Type", "application/json")
-	//send the post and comments as a JSON response
 	err = json.NewEncoder(w).Encode(postWithComments)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

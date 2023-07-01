@@ -15,7 +15,7 @@ function showNewPostForm() {
             <input id="title" class="input" type="text" name="title" placeholder="Title" required>
         </p>
         <p class="align">
-            <textarea id="content" class="input"  cols="50" rows="10" wrap="hard" name="content" placeholder="Content" required></textarea>
+            <textarea id="content" class="input"  cols="43" rows="10" wrap="hard" name="content" placeholder="Content" required></textarea>
         </p>
         <div class="content">Please choose one or more categories</div>
         <p class="radio">
@@ -28,11 +28,9 @@ function showNewPostForm() {
         </p>
         <p class="align">
             <button class="buttons" type="submit">Publish Post</button>
+            <input id="back" class="buttons" type="button" value="Cancel">
         </p>
     </form>
-    <p class="align">
-        <input id="back" class="buttons" type="button" value="Back to main page">
-    </p>
     `;
 
     const newPostForm = document.getElementById('newpostform');
@@ -42,7 +40,7 @@ function showNewPostForm() {
     const mainPage = document.getElementById('mainpage');
     mainPage.addEventListener('click', loadUserPage);
 
-    //by clicking on the "Back to main page" button, you will see the userPage as a mainpage
+    //by clicking on the "Cancel" button, you will see the userPage as a mainpage
     const backButton = document.getElementById('back');
     backButton.addEventListener('click', loadUserPage);
 }

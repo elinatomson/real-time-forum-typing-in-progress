@@ -43,10 +43,11 @@ function sortUsers(users) {
 //populating the user list in the HTML document
 function renderUserList(users, currentUser) {
 	const userListContainer = document.getElementById('user-list-container');
+    userListContainer.innerHTML = ''
 	userListContainer.className = 'users-container';
   
 	users.forEach(user => {
-		//exclude the logged in user from the list
+		//get all the users, except the logged in user himself
 		if (user.nickname !== currentUser) {
 			const userItem = document.createElement('div');
 			userItem.className = 'user';

@@ -19,7 +19,7 @@ type Message struct {
 var message Message
 
 func Messageing(w http.ResponseWriter, r *http.Request) {
-	if r.Method == "POST" {
+	if r.Method == http.MethodPost {
 		addMessage(w, r)
 	} else {
 		w.WriteHeader(http.StatusMethodNotAllowed)
@@ -42,16 +42,20 @@ func addMessage(w http.ResponseWriter, r *http.Request) {
 		Date:         time.Now(),
 	}
 
-	message.NicknameFrom, _ = nicknameFromSession(r)
+	message.NicknameFrom, err = nicknameFromSession(r)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
 	if message.Message != "" {
-		//insert the message
 		_, err := db.Exec(`INSERT INTO messages (message, nicknamefrom, nicknameto, date) VALUES (?, ?, ?, ?)`, message.Message, message.NicknameFrom, message.NicknameTo, message.Date)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
-		//update the last_message_date
+		//update the last_message_date for sorting the forum users
 		_, err = db.Exec("UPDATE users SET last_message_date = DATETIME('now') WHERE nickname = ?", message.NicknameFrom)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -72,7 +76,11 @@ func GetMessages(w http.ResponseWriter, r *http.Request) {
 	offset := (pageNum - 1) * pageSizeNum
 
 	nicknameTo := r.URL.Query().Get("nicknameTo")
-	nicknameFrom, _ := nicknameFromSession(r)
+	nicknameFrom, err := nicknameFromSession(r)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 
 	rows, err := db.Query(`
 		SELECT message, nicknamefrom, nicknameto, date FROM messages WHERE (nicknameto = ? AND nicknamefrom = ?) OR (nicknameto = ? AND nicknamefrom = ?)
@@ -94,12 +102,15 @@ func GetMessages(w http.ResponseWriter, r *http.Request) {
 		messages = append(messages, msg)
 	}
 
-	// Send the messages as a JSON response
 	json.NewEncoder(w).Encode(messages)
 }
 
 func UnreadMessages(w http.ResponseWriter, r *http.Request) {
-	nicknameTo, _ := nicknameFromSession(r)
+	nicknameTo, err := nicknameFromSession(r)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 	rows, err := db.Query("SELECT message, nicknamefrom, nicknameto, date FROM messages WHERE read = 0 AND nicknameto = ?", nicknameTo)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -107,7 +118,6 @@ func UnreadMessages(w http.ResponseWriter, r *http.Request) {
 	}
 	defer rows.Close()
 
-	//iterate over the query results and build the list of unread messages
 	var unreadMessages = []Message{}
 	for rows.Next() {
 		var msg Message
@@ -122,9 +132,13 @@ func UnreadMessages(w http.ResponseWriter, r *http.Request) {
 }
 
 func MessagesAsRead(w http.ResponseWriter, r *http.Request) {
-	nicknameTo, _ := nicknameFromSession(r)
+	nicknameTo, err := nicknameFromSession(r)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 	nicknameFrom := r.URL.Query().Get("nicknameFrom")
-	_, err := db.Exec(`UPDATE messages SET read = 1 WHERE nicknameto = ? AND nicknamefrom = ? AND read = 0`, nicknameTo, nicknameFrom)
+	_, err = db.Exec(`UPDATE messages SET read = 1 WHERE nicknameto = ? AND nicknamefrom = ? AND read = 0`, nicknameTo, nicknameFrom)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

@@ -58,7 +58,7 @@ func decodeSession(w http.ResponseWriter, r *http.Request) {
 }
 
 func getCookieFromSession(w http.ResponseWriter, session Session) error {
-	// Query the database to retrieve the stored cookie value
+	//query the database to retrieve the stored cookie value
 	stmt := `SELECT cookie FROM sessions WHERE cookie = ?`
 	row := db.QueryRow(stmt, session.Cookie)
 	var storedCookie string
@@ -68,7 +68,7 @@ func getCookieFromSession(w http.ResponseWriter, session Session) error {
 		fmt.Fprintf(w, "Cookie does not match!")
 		return nil
 	}
-	// Compare the client-side cookie with the stored cookie
+	//compare the client-side cookie with the stored cookie
 	if session.Cookie == storedCookie {
 		fmt.Fprintf(w, "Cookie matches!")
 	} else {

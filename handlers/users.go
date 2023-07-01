@@ -8,7 +8,6 @@ import (
 	"time"
 )
 
-// TO-Do user sorting, based on last message sent to this user
 func GetUsers(w http.ResponseWriter, r *http.Request) {
 	//users must be organized by the last message sent. If the user is new and does not present messages you must organize it in alphabetic order.
 	//so taking into account the last_message_date from users table and sorting is in messages.js file in usersForChat function
@@ -28,20 +27,6 @@ func GetUsers(w http.ResponseWriter, r *http.Request) {
 	GROUP BY users.nickname
 	ORDER BY COALESCE(last_message_date, '1900-01-01') DESC, users.nickname ASC
 `, currentUser, currentUser, currentUser)
-	/*
-		//original query
-			rows, err := db.Query(`
-					SELECT users.nickname, (CASE WHEN sessions.nickname IS NULL THEN FALSE ELSE TRUE END) AS online, users.last_message_date
-					FROM users
-					LEFT JOIN sessions ON users.nickname = sessions.nickname
-					LEFT JOIN (
-						SELECT nicknamefrom, MAX(date) AS last_message_date
-						FROM messages
-						GROUP BY nicknamefrom
-					) AS last_message ON users.nickname = last_message.nicknamefrom
-					ORDER BY COALESCE(last_message.last_message_date, '1900-01-01') DESC, users.nickname ASC
-				`)
-	*/
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -75,7 +60,7 @@ func GetUsers(w http.ResponseWriter, r *http.Request) {
 
 	SortUsers(users)
 
-	//add the current user's nickname to the response
+	//setting the currentUser in the users db table as a true to add the current user's nickname to the response
 	for i := range users {
 		if users[i].Nickname == currentUser {
 			users[i].CurrentUser = true

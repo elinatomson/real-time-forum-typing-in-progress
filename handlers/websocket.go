@@ -40,20 +40,18 @@ func Websocket(w http.ResponseWriter, r *http.Request) {
 	for {
 		// Read message from the client
 		_, message, err := conn.ReadMessage()
-		//If an error occurs during reading, it logs the error and breaks out of the loop.
 		if err != nil {
 			log.Println("Failed to read message:", err)
 			break
 		}
 		//It then unmarshals the received message into a Message struct, which includes the recipient user's nickname.
-		//If unmarshaling fails, it logs the error and breaks out of the loop.
 		var msg Message
 		err = json.Unmarshal(message, &msg)
 		if err != nil {
 			log.Println("Failed to unmarshal message:", err)
 			break
 		}
-		//Finally, it calls the handleMessage function, passing the recipient user's nickname and the message as parameters to handle the received message.
+		//Finally, it calls the handleMessage function, passing the recipient user's nickname, writer user's nickname and the message as parameters to handle the received message.
 		handleMessage(r, w, msg.NicknameTo, msg.NicknameFrom, msg)
 	}
 

@@ -6,7 +6,6 @@ export function webSoc(nicknameTo, nicknameFrom) {
   //If there is no open WebSocket connection, the code creates a new WebSocket connection by instantiating a WebSocket object and passing the WebSocket URL as a parameter.
   socket = new WebSocket("ws://localhost:8080/ws");
 
-  // Get the necessary DOM elements
   const messageBox = document.getElementById("message-box");
   const messageInput = document.getElementById("message-input");
   const sendButton = document.getElementById("send-button");
@@ -49,7 +48,7 @@ export function webSoc(nicknameTo, nicknameFrom) {
 
   // Event listener for the send button
   sendButton.addEventListener("click", (event) => {
-    event.preventDefault(); // Prevent page reload
+    event.preventDefault();
     //The content of the message input field is retrieved and stored in the message variable.
     const message = messageInput.value;
     // Send the message, sender and recipient to the server
@@ -59,8 +58,6 @@ export function webSoc(nicknameTo, nicknameFrom) {
   });
 
   // Function to handle the received message
-
-  // TO-DO you and me to sender and receiver
   function handleMessage(message) {
     let senderNickname = nicknameTo;
 
@@ -71,6 +68,8 @@ export function webSoc(nicknameTo, nicknameFrom) {
     const messageText = message.message;
     const formattedTime = new Date(message.date).toLocaleString();
     messageBox.value += `${formattedTime} - ${senderNickname}: ${messageText}\n`;
+    //if new message has been written, then scrolling automatically to the bottom of the message box
+    messageBox.scrollTop = messageBox.scrollHeight;
   }
 }
 

@@ -57,6 +57,7 @@ export function loadUserPage() {
       .then(posts => {
         if (Array.isArray(posts)) { // Check if posts is an array
           var postContainer = document.getElementById('postContainer');
+          postContainer.innerHTML = '';
           posts.forEach(post => {
               var postElement = document.createElement('div');
               postElement.classList.add('post');
@@ -64,7 +65,6 @@ export function loadUserPage() {
               postElement.innerHTML = `
               <div class="post-list-title">${post.title}</div>
               <div class="poster">
-                <p>${post.content}</p>
                 Posted by ${post.nickname}
                 at ${formattedDate}
               </div>

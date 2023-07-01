@@ -52,6 +52,7 @@ function showRegistrationForm() {
     </p>
     <p class="align">
       <input class="buttons" type="submit" value="Register">
+      <input id="back" class="buttons" type="button" value="Cancel">
     </p>
   </form>
 `;
@@ -71,6 +72,12 @@ function showRegistrationForm() {
     var password_repeat = document.getElementById('password-repeat').value;
 
     submitRegistrationForm(nickname, age, gender, firstName, lastName, email, password, password_repeat);
+  });
+
+  const backButton = document.getElementById('back');
+  backButton.addEventListener('click', function(event) {
+    event.preventDefault();
+    window.location.href = '/';
   });
 }
 

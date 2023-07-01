@@ -24,6 +24,7 @@ export function showLogInForm() {
       </p>
       <p class="align">
         <input class="buttons" type="submit" value="Login">
+        <input id="back" class="buttons" type="button" value="Cancel">
       </p>
     </form>
     `;
@@ -41,6 +42,12 @@ export function showLogInForm() {
 
       submitLogInForm(userData);
     });
+
+    const backButton = document.getElementById('back');
+    backButton.addEventListener('click', function(event) {
+      event.preventDefault();
+      window.location.href = '/';
+    });
   }
 
   function submitLogInForm(userData) {
@@ -55,15 +62,15 @@ export function showLogInForm() {
       if (response.ok) {
         loadUserPage(); //load the logged in user page
       } else {
-          return response.text(); 
+          return response.text(); //returns response.text() to propagate the error message to the next .then() in the chain
       }
     })
     .then(errorMessage => {
       if (errorMessage) {
-        displayErrorMessage(errorMessage);
+        displayErrorMessage(errorMessage);  //to handle the error message received from the previous .then() in case the response was not successful
       }
     })
-    .catch(error => {
+    .catch(error => { //to handle any other errors that might occur during the fetch request or any of the .then() functions
       displayErrorMessage(`An error occurred while logging in: ${error.message}`);
     });
   }

@@ -99,7 +99,8 @@ function sendCommentData(commentData) {
     })
     .then(response => {
         if (response.ok) {
-            loadUserPage() //sending user to the userPage which is in this case as a mainpage
+            //reload the readpost page with the updated comments
+            loadPostPage(commentData.postID); 
         } else {
             return response.text(); 
         }

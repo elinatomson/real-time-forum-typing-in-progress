@@ -19,15 +19,15 @@ function loggingOut() {
         if (response.ok) {
             showLoggedOutMessage();
         } else {
-            return response.text(); //returns response.text() to propagate the error message to the next .then() in the chain
+            return response.text(); 
         }
     })
-    .then(errorMessage => { //to handle the error message received from the previous .then() in case the response was not successful
+    .then(errorMessage => { 
         if (errorMessage) {
             displayErrorMessage(errorMessage);
         }
     })
-    .catch(error => { //to handle any other errors that might occur during the fetch request or any of the .then() functions
+    .catch(error => { 
         displayErrorMessage(`An error occurred while logging out: ${error.message}`);
     });
 }

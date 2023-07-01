@@ -3,13 +3,13 @@ import { loadUserPage } from './userpage.js';
  
 export function handleUserClick(user) {
   const formContainer = document.getElementById('formContainer');
-  formContainer.innerHTML = 
-  `Chat with ${user}
+  formContainer.innerHTML = `
+  <div class="unread">Chat with ${user}</div>
   <div>
-    <textarea id="message-box" rows="10" cols="50" readonly></textarea>
-    <div>
-      <input type="text" id="message-input">
-      <button id="send-button">Send</button>
+    <textarea class="messagebox" id="message-box" rows="10" cols="45" readonly></textarea>
+    <div class="align">
+      <input type="text" id="message-input" class="input">
+      <button class="buttons" id="send-button">Send</button>
     </div>
   </div>
   <p class="align">
@@ -34,7 +34,7 @@ export function handleUserClick(user) {
   var backButton = document.getElementById('back'); 
   backButton.addEventListener('click', function(event) {
       event.preventDefault();
-      loadUserPage(); //TODO! if you click it for the first time, then everything in the userpage is somehow dublicated. 
+      loadUserPage(); 
   });
 }
 
@@ -108,7 +108,6 @@ function unreadMessageCount(count, senders) {
     senderSpan.dataset.user = sender;
     senderSpan.addEventListener("click", () => {
       handleUserClick(sender);
-      console.log("sender in messages.js before webSoc(sender):",sender)
       webSoc(sender);
     });
     senderNamesElement.appendChild(senderSpan);
