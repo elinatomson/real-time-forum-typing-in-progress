@@ -13,7 +13,7 @@ export function loadUserPage() {
       contentContainer.innerHTML = html;
 
       var modifiedHTML = `
-      <header class="header">
+      <header class="header" id="header">
         <div class="name">Welcome!</div>
         <div class="dropdown">
           <button class="dropbtn">Menu</button>

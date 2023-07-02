@@ -15,18 +15,10 @@ export function webSoc(nicknameTo, nicknameFrom) {
     console.log("WebSocket connection established.");
   });
 
-  // Close the WebSocket connection when the user clicks outside the formContainer 
-  document.addEventListener("click", (event) => {
-    const formContainer = document.getElementById("formContainer");
-    if (!formContainer.contains(event.target) && socket && socket.readyState === WebSocket.OPEN) {
-      socket.close();
-      console.log("WebSocket connection closed.");
-    }
-  });
 
-  // Event listener for the "Back to main page" button
-  const backButton = document.getElementById("back");
-  backButton.addEventListener("click", () => {
+  // Event listener for the log out button
+  const logOut = document.getElementById("logout-button");
+  logOut.addEventListener("click", () => {
     if (socket && socket.readyState === WebSocket.OPEN) {
       socket.close();
       console.log("WebSocket connection closed.");
@@ -56,6 +48,15 @@ export function webSoc(nicknameTo, nicknameFrom) {
     // After sending the message, the content of the message input field is cleared
     messageInput.value = "";
   });
+
+  messageInput.addEventListener("keydown", (event) => {
+    if (event.keyCode === 13) {
+      event.preventDefault();
+      const message = messageInput.value;
+      sendMessage(message, nicknameTo, nicknameFrom);
+      messageInput.value = "";
+    }
+  })
 
   // Function to handle the received message
   function handleMessage(message) {
