@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"real-time-forum/backend/database"
 	"time"
 )
 
@@ -52,7 +53,7 @@ func addPost(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if post.Title != "" && post.Content != "" {
-		_, err := db.Exec(`INSERT INTO posts (title, content, category1, category2, category3, date, nickname) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+		_, err := database.Db.Exec(`INSERT INTO posts (title, content, category1, category2, category3, date, nickname) VALUES (?, ?, ?, ?, ?, ?, ?)`,
 			post.Title, post.Content, post.Movies, post.Serials, post.RealityShows, post.Date, nickname)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -88,7 +89,7 @@ func addComment(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if comment.Comment != "" {
-		_, err := db.Exec(`INSERT INTO comments (comment, date, nickname, postID) VALUES (?, ?, ?, ?)`,
+		_, err := database.Db.Exec(`INSERT INTO comments (comment, date, nickname, postID) VALUES (?, ?, ?, ?)`,
 			comment.Comment, comment.CommentDate, nickname, id)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)

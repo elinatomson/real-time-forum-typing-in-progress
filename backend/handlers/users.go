@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"net/http"
+	"real-time-forum/backend/database"
 	"sort"
 	"time"
 )
@@ -18,7 +19,7 @@ func GetUsers(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	rows, err := db.Query(`
+	rows, err := database.Db.Query(`
 	SELECT users.nickname, (CASE WHEN sessions.nickname IS NULL THEN FALSE ELSE TRUE END) AS online, MAX(messages.date) AS last_message_date
 	FROM users
 	LEFT JOIN sessions ON users.nickname = sessions.nickname

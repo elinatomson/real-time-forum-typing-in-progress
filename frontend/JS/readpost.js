@@ -2,7 +2,7 @@ import { loadUserPage } from './userpage.js';
 import { displayErrorMessage } from './errormessage.js';
 
 export function loadPostPage(postID) {
-    fetch(`/readpost?id=${postID}`)
+    fetch(`/read-post?id=${postID}`)
     .then(response => response.json())
     .then(data => {
         var formContainer = document.getElementById('formContainer');
@@ -63,12 +63,27 @@ export function loadPostPage(postID) {
         commentForm.addEventListener('submit', event => submitComment(event, data));
         
         //if you are logged in, then clicking on the Forum name, you will see the userPage as a mainpage
-        const mainPage = document.getElementById('mainpage');
-        mainPage.addEventListener('click', loadUserPage);
+        var mainPage = document.getElementById('mainpage');
+        mainPage.addEventListener('click', function(event) {
+            event.preventDefault();
+            loadUserPage()
+            //the history.pushState() method adds an entry to the browser's session history stack
+            window.history.pushState({ page: 'userpage' }, '', '/');
+        });
     
         //by clicking on the "Back to main page" button, you will see the userPage as a mainpage
-        const backButton = document.getElementById('back');
-        backButton.addEventListener('click', loadUserPage);
+        var backButton = document.getElementById('back'); 
+        backButton.addEventListener('click', function(event) {
+            event.preventDefault();
+            loadUserPage()
+            window.history.pushState({ page: 'userpage' }, '', '/');
+        });
+
+        window.history.pushState({ page: 'readpost', }, '', `/`);
+        //an event listener to handle the browsers' back button
+        window.addEventListener('popstate', function () {
+        loadUserPage()
+        });
     })
     .catch(error => {
         displayErrorMessage(`An error occurred while loading a post: ${error.message}`);

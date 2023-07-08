@@ -56,6 +56,13 @@ function showLoggedOutMessage() {
     mainPage2.addEventListener('click', function(event) {
         event.preventDefault();
         window.location.href = '/';
+        window.history.pushState({ page: 'mainpage' }, '', '/');
+    });
+
+    window.history.pushState({ page: 'mainpage', }, '', `/`);
+    //an event listener to handle the browsers' back button
+    window.addEventListener('popstate', function () {
+        window.location.href = '/';
     });
 }
 

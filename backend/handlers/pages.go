@@ -13,7 +13,7 @@ func MainPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tmpl, err := template.ParseFiles("static/index.html")
+	tmpl, err := template.ParseFiles("frontend/index.html")
 	if err != nil {
 		log.Println("Failed to parse template:", err)
 		http.Error(w, "Something went wrong, please try again.", http.StatusInternalServerError)

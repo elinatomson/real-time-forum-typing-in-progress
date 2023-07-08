@@ -3,13 +3,14 @@ package handlers
 import (
 	"encoding/json"
 	"net/http"
+	"real-time-forum/backend/database"
 )
 
 func ReadPost(w http.ResponseWriter, r *http.Request) {
 	id := r.URL.Query().Get("id")
 
 	var post Post
-	rows, err := db.Query(`SELECT postID, title, content, category1, category2, category3, nickname, date FROM posts WHERE postID=?`, id)
+	rows, err := database.Db.Query(`SELECT postID, title, content, category1, category2, category3, nickname, date FROM posts WHERE postID=?`, id)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -26,7 +27,7 @@ func ReadPost(w http.ResponseWriter, r *http.Request) {
 
 	var comment Comment
 	var allComments []Comment
-	rows1, err := db.Query(`SELECT commentID, postID, comment, nickname, date FROM comments WHERE postID = ?`, id)
+	rows1, err := database.Db.Query(`SELECT commentID, postID, comment, nickname, date FROM comments WHERE postID = ?`, id)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

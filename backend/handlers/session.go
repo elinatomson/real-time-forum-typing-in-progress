@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"real-time-forum/backend/database"
 	"time"
 
 	"github.com/gofrs/uuid"
@@ -27,7 +28,7 @@ func addCookie(w http.ResponseWriter, nickname string) {
 		Expires: expire,
 	}
 	http.SetCookie(w, &cookie)
-	_, err := db.Exec(`INSERT INTO sessions (nickname, cookie)  VALUES(?, ?)	`, nickname, uuid.String())
+	_, err := database.Db.Exec(`INSERT INTO sessions (nickname, cookie)  VALUES(?, ?)	`, nickname, uuid.String())
 	if err != nil {
 		log.Println(err)
 	}
@@ -60,7 +61,7 @@ func decodeSession(w http.ResponseWriter, r *http.Request) {
 func getCookieFromSession(w http.ResponseWriter, session Session) error {
 	//query the database to retrieve the stored cookie value
 	stmt := `SELECT cookie FROM sessions WHERE cookie = ?`
-	row := db.QueryRow(stmt, session.Cookie)
+	row := database.Db.QueryRow(stmt, session.Cookie)
 	var storedCookie string
 	err := row.Scan(&storedCookie)
 	if err != nil {
@@ -90,7 +91,7 @@ func deleteSession(r *http.Request) error {
 	if err != nil {
 		return err
 	}
-	_, err = db.Exec(`DELETE FROM sessions WHERE cookie = ?`, uuid.String())
+	_, err = database.Db.Exec(`DELETE FROM sessions WHERE cookie = ?`, uuid.String())
 	if err != nil {
 		return err
 	}
@@ -108,7 +109,7 @@ func nicknameFromSession(r *http.Request) (string, error) {
 		return "", err
 	}
 	stmt := `SELECT nickname FROM sessions WHERE cookie = ?`
-	row := db.QueryRow(stmt, uuid.String())
+	row := database.Db.QueryRow(stmt, uuid.String())
 	var nickname string
 	err = row.Scan(&nickname)
 	if err != nil {
@@ -120,7 +121,7 @@ func nicknameFromSession(r *http.Request) (string, error) {
 
 func sessionExists(db *sql.DB, nickname string) bool {
 	stmt := `SELECT nickname FROM sessions WHERE nickname = ?`
-	row := db.QueryRow(stmt, nickname)
+	row := database.Db.QueryRow(stmt, nickname)
 	var storedNickname string
 	err := row.Scan(&storedNickname)
 	if err != nil {
@@ -144,12 +145,11 @@ func checkSession(w http.ResponseWriter, r *http.Request) (int, error) {
 	}
 	//verify that the uuID is valid
 	uuid, err := uuid.FromString(cookie.Value)
-	fmt.Println(cookie.Value)
 	if err != nil {
 		return 0, err
 	}
 	stmt := `SELECT nickname FROM sessions WHERE cookie = ?`
-	row := db.QueryRow(stmt, uuid.String())
+	row := database.Db.QueryRow(stmt, uuid.String())
 	var nickname string
 
 	err = row.Scan(&nickname)

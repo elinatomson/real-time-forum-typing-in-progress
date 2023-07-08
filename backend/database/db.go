@@ -1,10 +1,10 @@
-package handlers
+package database
 
 import (
 	"database/sql"
 )
 
-var db *sql.DB
+var Db *sql.DB
 
 const UserDB = `
 	CREATE TABLE IF NOT EXISTS users (
@@ -55,7 +55,7 @@ const MessageDB = `
 )`
 
 func createDataBaseTable(data string) error {
-	stmt, err := db.Prepare(data)
+	stmt, err := Db.Prepare(data)
 	if err != nil {
 		return err
 	}
@@ -65,7 +65,7 @@ func createDataBaseTable(data string) error {
 }
 func AllDataBases() {
 	var err error
-	db, err = sql.Open("sqlite3", "data.db")
+	Db, err = sql.Open("sqlite3", "./backend/database/data.db")
 	if err != nil {
 		panic(err.Error())
 	}

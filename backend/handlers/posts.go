@@ -3,13 +3,14 @@ package handlers
 import (
 	"encoding/json"
 	"net/http"
+	"real-time-forum/backend/database"
 )
 
 func DisplayPosts(w http.ResponseWriter, r *http.Request) {
 	var allPosts []Post
 	var post Post
 
-	rows, err := db.Query(`SELECT postID, title, content, nickname, date, category1, category2, category3 FROM posts`)
+	rows, err := database.Db.Query(`SELECT postID, title, content, nickname, date, category1, category2, category3 FROM posts`)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

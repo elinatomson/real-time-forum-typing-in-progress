@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"real-time-forum/backend/database"
 	"strconv"
 	"time"
 )
@@ -49,14 +50,14 @@ func addMessage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if message.Message != "" {
-		_, err := db.Exec(`INSERT INTO messages (message, nicknamefrom, nicknameto, date) VALUES (?, ?, ?, ?)`, message.Message, message.NicknameFrom, message.NicknameTo, message.Date)
+		_, err := database.Db.Exec(`INSERT INTO messages (message, nicknamefrom, nicknameto, date) VALUES (?, ?, ?, ?)`, message.Message, message.NicknameFrom, message.NicknameTo, message.Date)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
 		//update the last_message_date for sorting the forum users
-		_, err = db.Exec("UPDATE users SET last_message_date = DATETIME('now') WHERE nickname = ?", message.NicknameFrom)
+		_, err = database.Db.Exec("UPDATE users SET last_message_date = DATETIME('now') WHERE nickname = ?", message.NicknameFrom)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -82,7 +83,7 @@ func GetMessages(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	rows, err := db.Query(`
+	rows, err := database.Db.Query(`
 		SELECT message, nicknamefrom, nicknameto, date FROM messages WHERE (nicknameto = ? AND nicknamefrom = ?) OR (nicknameto = ? AND nicknamefrom = ?)
 		ORDER BY date DESC LIMIT ? OFFSET ?`, nicknameTo, nicknameFrom, nicknameFrom, nicknameTo, pageSizeNum, offset)
 	if err != nil {
@@ -111,7 +112,7 @@ func UnreadMessages(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	rows, err := db.Query("SELECT message, nicknamefrom, nicknameto, date FROM messages WHERE read = 0 AND nicknameto = ?", nicknameTo)
+	rows, err := database.Db.Query("SELECT message, nicknamefrom, nicknameto, date FROM messages WHERE read = 0 AND nicknameto = ?", nicknameTo)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -138,7 +139,7 @@ func MessagesAsRead(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	nicknameFrom := r.URL.Query().Get("nicknameFrom")
-	_, err = db.Exec(`UPDATE messages SET read = 1 WHERE nicknameto = ? AND nicknamefrom = ? AND read = 0`, nicknameTo, nicknameFrom)
+	_, err = database.Db.Exec(`UPDATE messages SET read = 1 WHERE nicknameto = ? AND nicknamefrom = ? AND read = 0`, nicknameTo, nicknameFrom)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

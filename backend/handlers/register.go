@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"real-time-forum/backend/database"
 
 	"golang.org/x/crypto/bcrypt"
 )
@@ -49,7 +50,7 @@ func addUserData(w http.ResponseWriter, r *http.Request) {
 func insertUserData(userData UserData) error {
 	//checking if nickname or email already exists
 	stmt := `SELECT email FROM users WHERE email = ?`
-	row := db.QueryRow(stmt, userData.Email)
+	row := database.Db.QueryRow(stmt, userData.Email)
 	var email string
 	err := row.Scan(&email)
 	if err != sql.ErrNoRows {
@@ -57,7 +58,7 @@ func insertUserData(userData UserData) error {
 	}
 
 	stmt = `SELECT nickname FROM users WHERE nickname = ?`
-	row = db.QueryRow(stmt, userData.Nickname)
+	row = database.Db.QueryRow(stmt, userData.Nickname)
 	var nickname string
 	err = row.Scan(&nickname)
 	if err != sql.ErrNoRows {
@@ -71,7 +72,7 @@ func insertUserData(userData UserData) error {
 	}
 
 	//inserting data do users table
-	_, err = db.Exec("INSERT INTO users(nickname, age, gender, firstname, lastname, email, password) VALUES(?, ?, ?, ?, ?, ?, ?)",
+	_, err = database.Db.Exec("INSERT INTO users(nickname, age, gender, firstname, lastname, email, password) VALUES(?, ?, ?, ?, ?, ?, ?)",
 		userData.Nickname, userData.Age, userData.Gender, userData.FirstName, userData.LastName, userData.Email, hash)
 	if err != nil {
 		return err

@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"real-time-forum/backend/database"
 	"time"
 
 	"golang.org/x/crypto/bcrypt"
@@ -49,15 +50,15 @@ func checkUser(w http.ResponseWriter, user User) error {
 		return errors.New("Please insert nickname and password")
 	}
 
-	if sessionExists(db, user.Nickname) {
-		_, err := db.Exec(`DELETE FROM sessions WHERE nickname = ?`, user.Nickname)
+	if sessionExists(database.Db, user.Nickname) {
+		_, err := database.Db.Exec(`DELETE FROM sessions WHERE nickname = ?`, user.Nickname)
 		if err != nil {
 			return err
 		}
 	}
 
 	stmt := `SELECT password FROM users WHERE nickname = ?`
-	row := db.QueryRow(stmt, user.Nickname)
+	row := database.Db.QueryRow(stmt, user.Nickname)
 	var hash string
 	err := row.Scan(&hash)
 	if err != nil {

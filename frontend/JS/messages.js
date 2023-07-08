@@ -24,17 +24,28 @@ export function handleUserClick(user) {
   });
 
   displayMessages(user);
+
   //if you are logged in, then clicking on the Forum name, you will see the userPage as a mainpage
   var mainPage = document.getElementById('mainpage');
   mainPage.addEventListener('click', function(event) {
       event.preventDefault();
-      loadUserPage();
+      loadUserPage()
+      //the history.pushState() method adds an entry to the browser's session history stack
+      window.history.pushState({ page: 'userpage' }, '', '/');
   });
+
   //by clicking on the "Back to main page" button, you will see the userPage as a mainpage
   var backButton = document.getElementById('back'); 
   backButton.addEventListener('click', function(event) {
       event.preventDefault();
-      loadUserPage(); 
+      loadUserPage()
+      window.history.pushState({ page: 'userpage' }, '', '/');
+  });
+
+  window.history.pushState({ page: 'chat', }, '', `/`);
+  //an event listener to handle the browsers' back button
+  window.addEventListener('popstate', function () {
+  loadUserPage()
   });
 }
 
@@ -82,7 +93,7 @@ export function displayMessages(nicknameTo) {
 }
 
 function messagesAsRead(nicknameFrom) {
-  fetch(`/messages/markAsRead?nicknameFrom=${nicknameFrom}`)
+  fetch(`/messages/mark-as-read?nicknameFrom=${nicknameFrom}`)
     .then(response => {
       if (response.ok) {
         console.log('All messages sent for the logged in user marked as read.');

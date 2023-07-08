@@ -37,12 +37,27 @@ function showNewPostForm() {
     newPostForm.addEventListener('submit', newPostFormSubmit);
 
     //if you are logged in, then clicking on the Forum name, you will see the userPage as a mainpage
-    const mainPage = document.getElementById('mainpage');
-    mainPage.addEventListener('click', loadUserPage);
+    var mainPage = document.getElementById('mainpage');
+    mainPage.addEventListener('click', function(event) {
+        event.preventDefault();
+        loadUserPage()
+        //the history.pushState() method adds an entry to the browser's session history stack
+        window.history.pushState({ page: 'userpage' }, '', '/');
+    });
 
     //by clicking on the "Cancel" button, you will see the userPage as a mainpage
-    const backButton = document.getElementById('back');
-    backButton.addEventListener('click', loadUserPage);
+    var backButton = document.getElementById('back'); 
+    backButton.addEventListener('click', function(event) {
+        event.preventDefault();
+        loadUserPage()
+        window.history.pushState({ page: 'userpage' }, '', '/');
+    });
+
+    window.history.pushState({ page: 'readpost' }, '', `/`);
+    //an event listener to handle the browsers' back button
+    window.addEventListener('popstate', function () {
+    loadUserPage()
+    });
 }
 
 function newPostFormSubmit(event) {
@@ -67,7 +82,7 @@ function newPostFormSubmit(event) {
       postData.realityshows = document.getElementById('realityshows').value;
     }
 
-    sendPostData(postData)
+    sendPostData(postData);
 }
 
 
