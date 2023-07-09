@@ -1,7 +1,7 @@
 # real-time-forum-typing-in-progress
 
 ## Project Description
-This is a private forum that provides a platform for registered users to engage in discussions by creating forum posts, associating categories with their posts, and participating in reading and commenting on all the posts. Additionally, the forum offers a chat feature that enables users to send private messages to each other.
+This is a private forum that provides a platform for registered users to engage in discussions by creating forum posts, associating categories with their posts, and participating in reading and commenting on all the posts. Additionally, the forum offers a chat feature that enables users to send private messages to each other. his version of the forum uses a typing in progress engine, allowing users to see when the person they are chating with is typing. 
 
 The chat functionality allows real-time communication between users who are online simultaneously. Even if a user is offline, they will still receive notifications about unread messages when they log in.
 
@@ -20,12 +20,14 @@ OR with Docker:
 - When you are finished and you want to delete docker container and images press Enter in your terminal. It will run delete_docker script. 
 
 ## For auditing
+Login to the forum using two different users on different browsers(for example Firefox and Chrome).
 The audit questions are [here](https://github.com/01-edu/public/blob/master/subjects/real-time-forum/typing-in-progress/audit.md)
 You can register totally new forum users or you can use excisting ones:
 - Nickname: Leonardo
 - Password: Tere1
 - Nickname: Elina
 - Password: Tere1
+
 
 ## Authors
 - [@elinat](https://01.kood.tech/git/elinat)
