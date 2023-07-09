@@ -15,6 +15,7 @@ type Message struct {
 	NicknameFrom string    `json:"nicknamefrom"`
 	NicknameTo   string    `json:"nicknameto"`
 	Date         time.Time `json:"date"`
+	Typing       bool      `json:"typing"`
 }
 
 var message Message

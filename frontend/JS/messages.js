@@ -9,6 +9,7 @@ export function handleUserClick(user) {
     <textarea class="messagebox" id="message-box" rows="10" cols="45" readonly></textarea>
     <div class="align">
       <input type="text" id="message-input" class="input">
+      <div id="typing-status"></div>
       <button class="buttons" id="send-button">Send</button>
     </div>
   </div>

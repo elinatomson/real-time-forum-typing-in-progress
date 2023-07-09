@@ -1,4 +1,4 @@
-# real-time-forum
+# real-time-forum-typing-in-progress
 
 ## Project Description
 This is a private forum that provides a platform for registered users to engage in discussions by creating forum posts, associating categories with their posts, and participating in reading and commenting on all the posts. Additionally, the forum offers a chat feature that enables users to send private messages to each other.
@@ -20,9 +20,11 @@ OR with Docker:
 - When you are finished and you want to delete docker container and images press Enter in your terminal. It will run delete_docker script. 
 
 ## For auditing
-The audit questions are [here](https://github.com/01-edu/public/tree/master/subjects/real-time-forum/audit)
-- Already registered user Leonardo has more then 20 messages with the user Elina. To check the loading of previous messages, you can log in with:
+The audit questions are [here](https://github.com/01-edu/public/blob/master/subjects/real-time-forum/typing-in-progress/audit.md)
+You can register totally new forum users or you can use excisting ones:
 - Nickname: Leonardo
+- Password: Tere1
+- Nickname: Elina
 - Password: Tere1
 
 ## Authors

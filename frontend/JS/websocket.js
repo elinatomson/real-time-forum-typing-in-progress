@@ -1,22 +1,21 @@
 import { displayErrorMessage } from './errormessage.js';
-//This variable will hold the WebSocket connection object.
-let socket ;
+
+let socket;
+let isTyping = false; //if the user is typing or not
+let typingTimeout = null; //how quickly the typing message disappears
 
 export function webSoc(nicknameTo, nicknameFrom) {
-  //If there is no open WebSocket connection, the code creates a new WebSocket connection by instantiating a WebSocket object and passing the WebSocket URL as a parameter.
   socket = new WebSocket("ws://localhost:8080/ws");
 
   const messageBox = document.getElementById("message-box");
   const messageInput = document.getElementById("message-input");
   const sendButton = document.getElementById("send-button");
+  const typingStatus = document.getElementById("typing-status");
 
-  // Event listener for WebSocket connection successfully opened
   socket.addEventListener("open", () => {
     console.log("WebSocket connection established.");
   });
 
-
-  // Event listener for the log out button
   const logOut = document.getElementById("logout-button");
   logOut.addEventListener("click", () => {
     if (socket && socket.readyState === WebSocket.OPEN) {
@@ -25,27 +24,19 @@ export function webSoc(nicknameTo, nicknameFrom) {
     }
   });
 
-  // Event listener for WebSocket errors
   socket.addEventListener("error", (error) => {
     console.error("WebSocket error:", error);
   });
 
-  // When a message is received from the server, the "message" event is triggered. 
   socket.addEventListener("message", (event) => {
-    //The received data is parsed as JSON, 
-    //and the resulting message object is passed to the handleMessage function for further processing.
     const message = JSON.parse(event.data);
     handleMessage(message);
   });
 
-  // Event listener for the send button
   sendButton.addEventListener("click", (event) => {
     event.preventDefault();
-    //The content of the message input field is retrieved and stored in the message variable.
     const message = messageInput.value;
-    // Send the message, sender and recipient to the server
     sendMessage(message, nicknameTo, nicknameFrom);
-    // After sending the message, the content of the message input field is cleared
     messageInput.value = "";
   });
 
@@ -56,66 +47,110 @@ export function webSoc(nicknameTo, nicknameFrom) {
       sendMessage(message, nicknameTo, nicknameFrom);
       messageInput.value = "";
     }
-  })
+  });
 
-  // Function to handle the received message
-  function handleMessage(message) {
-    let senderNickname = nicknameTo;
-
-    if (message.nicknameto === nicknameTo) {
-      senderNickname = nicknameFrom;
+  //eventlistener for the typing message 
+  messageInput.addEventListener("input", () => {
+    const message = messageInput.value.trim();
+    if (message !== "") {
+        isTyping = true;
+        sendTyping(true, nicknameTo);
+    } else {
+        isTyping = false;
+        sendTyping(false, nicknameTo);
     }
+  });
 
+  function handleMessage(message) {
+    let nickname = nicknameTo;
+    if (message.nicknameto === nicknameTo) {
+      nickname = nicknameFrom;
+    }
     const messageText = message.message;
     const formattedTime = new Date(message.date).toLocaleString();
-    messageBox.value += `${formattedTime} - ${senderNickname}: ${messageText}\n`;
-    //if new message has been written, then scrolling automatically to the bottom of the message box
-    messageBox.scrollTop = messageBox.scrollHeight;
-  }
-}
-
-//the WebSocket connection in the sendMessage function is used to transmit the message to the server in real-time, while the HTTP POST request is used to persist the message on the server for long-term storage.
-export function sendMessage(message, nicknameTo, nicknameFrom) {
-  //first checks if there is an open WebSocket connection (socket is not null and its readyState is WebSocket.OPEN).
-  if (!socket || socket.readyState !== WebSocket.OPEN) {
-    console.error("WebSocket connection not open.");
-    return;
-  }
-
-  const date = new Date(); // Current date and time
-
-  //If the WebSocket connection is open, the code creates a data object that represents the message data to be sent to the server
-  const data = {
-    message: message,
-    nicknamefrom: nicknameFrom,
-    nicknameto: nicknameTo,
-    date: date
-  };
-
-  //it is sent to the server using socket.send().
-  socket.send(JSON.stringify(data));
-
-  //After sending the message via WebSocket, the code makes an HTTP POST request to the /message endpoint on the server.
-  fetch("/message", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify(data)
-  })
-    .then(response => {
-      if (response.ok) {
-        console.log("Message sent successfully");
+  
+    //checks if the received message is not a "typing" message (message.typing is false).
+    if (!message.typing) {
+      if (messageText !== "") {
+        messageBox.value += `${formattedTime} - ${nickname}: ${messageText}\n`;
+      }
+      messageBox.scrollTop = messageBox.scrollHeight;
+    //if the received message is a "typing" message (message.typing is true)
+    } else {
+      if (nickname === nicknameTo) {
+        typingStatus.textContent = `${nickname} is typing...`;
+        clearTimeout(typingTimeout); 
+        typingTimeout = setTimeout(() => {
+          isTyping = false;
+          sendTyping(false, nicknameTo);
+          typingStatus.textContent = "";
+        }, 1000); 
+      //the "typing" message is from the user itself, so the next part ensures that if the user stops typing, the typing status is cleared and updated accordingly
       } else {
-        return response.text();
+        clearTimeout(typingTimeout);
+        //checks if the user was previously typing (isTyping is true)
+        if (isTyping) {
+          isTyping = false;
+          sendTyping(false, nicknameTo);
+          typingStatus.textContent = "";
+        }
       }
+    }
+  }
+
+  //sending a "typing" message to the server over the WebSocket connection, indicating the typing status of the user
+  function sendTyping(typing, nicknameTo) {
+    if (!socket || socket.readyState !== WebSocket.OPEN) {
+      console.error("WebSocket connection not open.");
+      return;
+    }
+
+    const data = {
+      typing: typing,
+      nicknamefrom: nicknameFrom,
+      nicknameto: nicknameTo
+    };
+    //transmits the data over the WebSocket connection
+    socket.send(JSON.stringify(data));
+  }
+
+  function sendMessage(message, nicknameTo, nicknameFrom) {
+    if (!socket || socket.readyState !== WebSocket.OPEN) {
+      console.error("WebSocket connection not open.");
+      return;
+    }
+
+    const date = new Date();
+    const data = {
+      message: message,
+      nicknamefrom: nicknameFrom,
+      nicknameto: nicknameTo,
+      date: date
+    };
+
+    socket.send(JSON.stringify(data));
+
+    fetch("/message", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(data)
     })
-    .then(errorMessage => {
-      if (errorMessage) {
-        displayErrorMessage(errorMessage);
-      }
-    })
-    .catch(error => {
-			displayErrorMessage(`An error occurred while sending message: ${error.message}`);
-    });
+      .then(response => {
+        if (response.ok) {
+          console.log("Message sent successfully");
+        } else {
+          return response.text();
+        }
+      })
+      .then(errorMessage => {
+        if (errorMessage) {
+          displayErrorMessage(errorMessage);
+        }
+      })
+      .catch(error => {
+        displayErrorMessage(`An error occurred while sending message: ${error.message}`);
+      });
+  }
 }
