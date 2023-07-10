@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"encoding/json"
 	"html/template"
 	"log"
 	"net/http"
@@ -29,16 +30,22 @@ func MainPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func UserPage(w http.ResponseWriter, r *http.Request) {
-	//checking if the user is logged in
-	logged, err := checkSession(w, r)
+	nickname, err := nicknameFromSession(r)
 	if err != nil {
-		log.Printf("Error with UserPage reading checkSession: %v", err)
-		http.Error(w, "Something went wrong, please try again.", http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	if logged == 0 {
-		//redirecting to the original main page if the user is not logged in
-		http.Redirect(w, r, "/", http.StatusFound)
+
+	user := User{
+		Nickname: nickname,
+	}
+
+	jsonResponse, err := json.Marshal(user)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(jsonResponse)
 }

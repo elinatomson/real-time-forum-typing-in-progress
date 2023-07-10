@@ -75,7 +75,7 @@ export function webSoc(nicknameTo, nicknameFrom) {
         messageBox.value += `${formattedTime} - ${nickname}: ${messageText}\n`;
       }
       messageBox.scrollTop = messageBox.scrollHeight;
-    //if the received message is a "typing" message (message.typing is true)
+    //if the received message is a "typing" message (message.typing is true), then displaying the typing text for the recipient
     } else {
       if (nickname === nicknameTo) {
         typingStatus.textContent = `${nickname} is typing...`;
@@ -85,10 +85,8 @@ export function webSoc(nicknameTo, nicknameFrom) {
           sendTyping(false, nicknameTo);
           typingStatus.textContent = "";
         }, 1000); 
-      //the "typing" message is from the user itself, so the next part ensures that if the user stops typing, the typing status is cleared and updated accordingly
       } else {
         clearTimeout(typingTimeout);
-        //checks if the user was previously typing (isTyping is true)
         if (isTyping) {
           isTyping = false;
           sendTyping(false, nicknameTo);
@@ -98,7 +96,7 @@ export function webSoc(nicknameTo, nicknameFrom) {
     }
   }
 
-  //sending a "typing" message to the server over the WebSocket connection, indicating the typing status of the user
+  //sending a "typing" message to the server over the WebSocket connection
   function sendTyping(typing, nicknameTo) {
     if (!socket || socket.readyState !== WebSocket.OPEN) {
       console.error("WebSocket connection not open.");
@@ -110,7 +108,6 @@ export function webSoc(nicknameTo, nicknameFrom) {
       nicknamefrom: nicknameFrom,
       nicknameto: nicknameTo
     };
-    //transmits the data over the WebSocket connection
     socket.send(JSON.stringify(data));
   }
 

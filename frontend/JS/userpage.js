@@ -3,18 +3,22 @@ import { unreadMessages } from './messages.js';
 import { loadPostPage } from './readpost.js';
 import { newPost } from './posting.js';
 import { logOut } from './logout.js';
+import { displayErrorMessage } from './errormessage.js';
 
 export function loadUserPage() {
   fetch('/userpage')
-    .then(response => response.text())
-    .then(html => {
-      //userPage HTML content
+    .then(response => {
+      if (response.ok) {
+        return response.json(); 
+      }else{
+        return response.text(); 
+      }
+    })
+    .then(user => {
       var contentContainer = document.createElement('div');
-      contentContainer.innerHTML = html;
-
       var modifiedHTML = `
       <header class="header" id="header">
-        <div class="name">Welcome!</div>
+        <div class="name">Welcome ${user.nickname}!</div>
         <div class="dropdown">
           <button class="dropbtn">Menu</button>
           <div class="dropdown-content">
@@ -43,19 +47,25 @@ export function loadUserPage() {
       </footer>      
     `;
 
-    document.body.innerHTML = modifiedHTML; //replacing entire document body with the modified HTML structure
-    document.body.appendChild(contentContainer); //adding user-specific content to the document body
+    document.body.innerHTML = modifiedHTML; 
+    document.body.appendChild(contentContainer); 
 
     usersForChat()
     newPost()
     logOut()
     unreadMessages()
 
-  //to see all posts on user mainpage
+    var mainPage = document.getElementById('mainpage');
+    mainPage.addEventListener('click', function(event) {
+        event.preventDefault();
+        loadUserPage()
+        window.history.pushState({ page: 'userpage' }, '', '/');
+    });
+
   fetch('/posts')
       .then(response => response.json())
       .then(posts => {
-        if (Array.isArray(posts)) { // Check if posts is an array
+        if (Array.isArray(posts)) { 
           var postContainer = document.getElementById('postContainer');
           postContainer.innerHTML = '';
           posts.forEach(post => {
@@ -75,7 +85,6 @@ export function loadUserPage() {
               </div>
               `;
           
-          //to make post clickable, so you can see this post
           postElement.addEventListener('click', function() {
             loadPostPage(post.ID);
           });

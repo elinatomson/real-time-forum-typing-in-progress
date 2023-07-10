@@ -48,7 +48,6 @@ func addUserData(w http.ResponseWriter, r *http.Request) {
 }
 
 func insertUserData(userData UserData) error {
-	//checking if nickname or email already exists
 	stmt := `SELECT email FROM users WHERE email = ?`
 	row := database.Db.QueryRow(stmt, userData.Email)
 	var email string
@@ -65,13 +64,11 @@ func insertUserData(userData UserData) error {
 		return errors.New("Nickname already taken")
 	}
 
-	//hashing password
 	hash, err := bcrypt.GenerateFromPassword([]byte(userData.Password), bcrypt.DefaultCost)
 	if err != nil {
 		return err
 	}
 
-	//inserting data do users table
 	_, err = database.Db.Exec("INSERT INTO users(nickname, age, gender, firstname, lastname, email, password) VALUES(?, ?, ?, ?, ?, ?, ?)",
 		userData.Nickname, userData.Age, userData.Gender, userData.FirstName, userData.LastName, userData.Email, hash)
 	if err != nil {

@@ -48,7 +48,7 @@ func Websocket(w http.ResponseWriter, r *http.Request) {
 			log.Println("Failed to unmarshal message:", err)
 			break
 		}
-		//finally calling the handleMessage function, passing the recipient user's nickname, writer user's nickname and the message as parameters to handle the received message
+		//finally calling the handleMessage function, passing the recipient user's nickname and the message as parameters to handle the received message
 		handleMessage(r, w, msg.NicknameTo, msg)
 	}
 
@@ -71,20 +71,19 @@ func handleMessage(r *http.Request, w http.ResponseWriter, nickname string, mess
 	mutex.Unlock()
 
 	if recipientFound {
-		//if the sender is typing (message.Typing is true), then it is needed to display the typing message
+		//if the sender is typing (message.Typing is true), then it is needed to display the typing message for the recipient
 		if message.Typing {
 			typingMessage := Message{
 				Typing:       true,
 				NicknameTo:   nickname,
 				NicknameFrom: senderNickname,
 			}
-			//data marshaled into JSON format using json.Marshal()
 			data, err := json.Marshal(typingMessage)
 			if err != nil {
 				log.Println("Failed to marshal typing message:", err)
 				return
 			}
-			//sending to the recipient user's WebSocket connection
+			//sending typing message to the recipient user's WebSocket connection
 			err = recipientConn.WriteMessage(websocket.TextMessage, data)
 			if err != nil {
 				log.Println("Failed to write typing message to recipient:", err)

@@ -60,7 +60,6 @@ function showLoggedOutMessage() {
     });
 
     window.history.pushState({ page: 'mainpage', }, '', `/`);
-    //an event listener to handle the browsers' back button
     window.addEventListener('popstate', function () {
         window.location.href = '/';
     });

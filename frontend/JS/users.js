@@ -16,8 +16,7 @@ export function usersForChat() {
         });
 }
 
-//iterates over the users array and checks for the currentUser property in each user object 
-//if it finds a user with currentUser set to true, it returns the value of the nickname property
+//iterates over the users array and if it finds a user with currentUser set to true, it returns the value of the nickname property
 function getCurrentUser(users) {
     for (const user of users) {
         if (user.currentUser) {
@@ -40,7 +39,6 @@ function sortUsers(users) {
     });
 }
 
-//populating the user list in the HTML document
 function renderUserList(users, currentUser) {
 	const userListContainer = document.getElementById('user-list-container');
     userListContainer.innerHTML = ''
@@ -59,7 +57,6 @@ function renderUserList(users, currentUser) {
 	});
   }
 
-//attaching click event listeners to the user elements in the user list
 function attachUserClickListeners(users, currentUser) {
     const userElements = document.querySelectorAll('.user');
 

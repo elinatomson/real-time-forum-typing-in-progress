@@ -1,8 +1,6 @@
 import { loadUserPage } from './userpage.js';
 
-//forum name clickable and directing to mainpage
 loadPage();
-//when there is a matching cookie in the database, then the userpage is displayed as a mainpage
 compareCookieWithDatabase();
 
 function loadPage() {

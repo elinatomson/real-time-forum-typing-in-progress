@@ -11,7 +11,7 @@ import (
 
 func GetUsers(w http.ResponseWriter, r *http.Request) {
 	//users must be organized by the last message sent. If the user is new and does not present messages you must organize it in alphabetic order.
-	//so taking into account the last_message_date from users table and sorting is in messages.js file in usersForChat function
+	//so taking into account the last_message_date from users table
 	//also comparing with excisting sessions to show the user online or offline
 	currentUser, err := nicknameFromSession(r)
 	if err != nil {

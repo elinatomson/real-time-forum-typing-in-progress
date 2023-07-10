@@ -36,16 +36,13 @@ function showNewPostForm() {
     const newPostForm = document.getElementById('newpostform');
     newPostForm.addEventListener('submit', newPostFormSubmit);
 
-    //if you are logged in, then clicking on the Forum name, you will see the userPage as a mainpage
     var mainPage = document.getElementById('mainpage');
     mainPage.addEventListener('click', function(event) {
         event.preventDefault();
         loadUserPage()
-        //the history.pushState() method adds an entry to the browser's session history stack
         window.history.pushState({ page: 'userpage' }, '', '/');
     });
 
-    //by clicking on the "Cancel" button, you will see the userPage as a mainpage
     var backButton = document.getElementById('back'); 
     backButton.addEventListener('click', function(event) {
         event.preventDefault();
@@ -54,7 +51,6 @@ function showNewPostForm() {
     });
 
     window.history.pushState({ page: 'readpost' }, '', `/`);
-    //an event listener to handle the browsers' back button
     window.addEventListener('popstate', function () {
     loadUserPage()
     });

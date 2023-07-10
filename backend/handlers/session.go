@@ -59,7 +59,6 @@ func decodeSession(w http.ResponseWriter, r *http.Request) {
 }
 
 func getCookieFromSession(w http.ResponseWriter, session Session) error {
-	//query the database to retrieve the stored cookie value
 	stmt := `SELECT cookie FROM sessions WHERE cookie = ?`
 	row := database.Db.QueryRow(stmt, session.Cookie)
 	var storedCookie string
@@ -69,7 +68,7 @@ func getCookieFromSession(w http.ResponseWriter, session Session) error {
 		fmt.Fprintf(w, "Cookie does not match!")
 		return nil
 	}
-	//compare the client-side cookie with the stored cookie
+
 	if session.Cookie == storedCookie {
 		fmt.Fprintf(w, "Cookie matches!")
 	} else {
@@ -78,7 +77,6 @@ func getCookieFromSession(w http.ResponseWriter, session Session) error {
 	return nil
 }
 
-// if logging out, then deleting session
 func deleteSession(r *http.Request) error {
 	cookie, err := r.Cookie("sessionId")
 	if err != nil {
@@ -98,7 +96,6 @@ func deleteSession(r *http.Request) error {
 	return nil
 }
 
-// getting nickname from session
 func nicknameFromSession(r *http.Request) (string, error) {
 	cookie, err := r.Cookie("sessionId")
 	if err != nil {
@@ -131,31 +128,4 @@ func sessionExists(db *sql.DB, nickname string) bool {
 		return false
 	}
 	return true
-}
-
-func checkSession(w http.ResponseWriter, r *http.Request) (int, error) {
-	cookie, err := r.Cookie("sessionId")
-	//checks if there's a cookie
-	if err != nil {
-		fmt.Println("cookie was not found")
-		if err == http.ErrNoCookie {
-			return 0, nil
-		}
-		return 0, err
-	}
-	//verify that the uuID is valid
-	uuid, err := uuid.FromString(cookie.Value)
-	if err != nil {
-		return 0, err
-	}
-	stmt := `SELECT nickname FROM sessions WHERE cookie = ?`
-	row := database.Db.QueryRow(stmt, uuid.String())
-	var nickname string
-
-	err = row.Scan(&nickname)
-	if err != nil {
-		return 0, err
-	}
-
-	return 1, nil
 }

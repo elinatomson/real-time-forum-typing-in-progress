@@ -82,7 +82,6 @@ function showRegistrationForm() {
 }
 
 function submitRegistrationForm(nickname, age, gender, firstName, lastName, email, password, password_repeat) {
-  //validations
   var nameLength = nickname.length >= 5 && nickname.length <= 50;
   var passwordLength = password.length >= 5 && password.length <= 50;
   var passwordMatch = password === password_repeat;
@@ -97,7 +96,6 @@ function submitRegistrationForm(nickname, age, gender, firstName, lastName, emai
     return;
   }
 
-  //validation passed, send user data to the server
   var userData = {
     nickname: nickname,
     age: age,
@@ -120,7 +118,7 @@ function sendUserData(userData) {
   })
   .then(response => {
     if (response.ok) {
-      showLogInForm(); //directing the user to log in
+      showLogInForm(); 
     } else {
       return response.text(); 
     }

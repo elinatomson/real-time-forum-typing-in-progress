@@ -69,7 +69,6 @@ func AllDataBases() {
 	if err != nil {
 		panic(err.Error())
 	}
-	//create named tables
 	createDataBaseTable(UserDB)
 	createDataBaseTable(PostDB)
 	createDataBaseTable(CommentDB)

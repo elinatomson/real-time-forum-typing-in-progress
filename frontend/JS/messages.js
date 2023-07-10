@@ -18,7 +18,6 @@ export function handleUserClick(user) {
   </p>`
 ;
 
-  //to mark all previously received messages as read when the user starts typing a new message.
   const messageInput = document.getElementById('message-input');
   messageInput.addEventListener('click', () => {
     messagesAsRead(user);
@@ -26,25 +25,23 @@ export function handleUserClick(user) {
 
   displayMessages(user);
 
-  //if you are logged in, then clicking on the Forum name, you will see the userPage as a mainpage
   var mainPage = document.getElementById('mainpage');
   mainPage.addEventListener('click', function(event) {
       event.preventDefault();
       loadUserPage()
-      //the history.pushState() method adds an entry to the browser's session history stack
+      messagesAsRead(user);
       window.history.pushState({ page: 'userpage' }, '', '/');
   });
 
-  //by clicking on the "Back to main page" button, you will see the userPage as a mainpage
   var backButton = document.getElementById('back'); 
   backButton.addEventListener('click', function(event) {
       event.preventDefault();
       loadUserPage()
+      messagesAsRead(user);
       window.history.pushState({ page: 'userpage' }, '', '/');
   });
 
   window.history.pushState({ page: 'chat', }, '', `/`);
-  //an event listener to handle the browsers' back button
   window.addEventListener('popstate', function () {
   loadUserPage()
   });
@@ -62,16 +59,13 @@ export function displayMessages(nicknameTo) {
         if (messages && messages.length > 0) {
           const newMessages = messages.map(message => {
             var formattedDate = new Date(message.date).toLocaleString();
-            //the way to display every message in the conversation history
             return `${formattedDate} - ${message.nicknamefrom}: ${message.message}`;
           });
-          //sort chronologically and reverse the order of messages so the newest ones are at the bottom
-          const messagesToDisplay = newMessages.sort((a, b) => a.date - b.date).reverse().join("\n") + "\n"; 
-          messageBox.value = messagesToDisplay + messageBox.value; // prepend messages
 
-          //if you are opening the chat, meaning it is the first page
+          const messagesToDisplay = newMessages.sort((a, b) => a.date - b.date).reverse().join("\n") + "\n"; 
+          messageBox.value = messagesToDisplay + messageBox.value; 
+
           if (page === 1) {
-            //set the scroll position to the bottom
             messageBox.scrollTop = messageBox.scrollHeight;
             messagesAsRead(nicknameTo);
           }
@@ -112,7 +106,7 @@ function unreadMessageCount(count, senders) {
   const senderNamesElement = document.createElement("span");
   senderNamesElement.id = "sender-names";
   
-  //to get sender names and make them clickable
+  //to get messages sender names and make them clickable
   senders.forEach((sender, index) => {
     const senderSpan = document.createElement("span");
     senderSpan.textContent = sender;
@@ -124,7 +118,6 @@ function unreadMessageCount(count, senders) {
     });
     senderNamesElement.appendChild(senderSpan);
 
-    //if there is more than 1 sender, then separate them with commas
     if (index < senders.length - 1) {
       const commaSpan = document.createElement("span");
       commaSpan.textContent = ", ";
@@ -146,13 +139,12 @@ export function unreadMessages() {
 
         messages.forEach(message => {
           const sender = message.nicknamefrom;
-          //adding sender name to the set
           senders.add(sender); 
         });
 
         const count = messages.length;
-        //converting the set to an array of sender names
         const senderNames = Array.from(senders);
+
         unreadMessageCount(count, senderNames); 
       } else {
         console.log('No unread messages');

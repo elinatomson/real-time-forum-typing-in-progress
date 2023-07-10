@@ -14,7 +14,6 @@ import (
 var tpl *template.Template
 
 func main() {
-	//creating all tables into the database
 	database.AllDataBases()
 
 	http.HandleFunc("/", handlers.MainPage)

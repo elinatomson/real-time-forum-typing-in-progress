@@ -43,13 +43,11 @@ func ReadPost(w http.ResponseWriter, r *http.Request) {
 		allComments = append(allComments, comment)
 	}
 
-	//struct to hold both the post and comments
 	type PostWithComments struct {
 		Post     Post      `json:"post"`
 		Comments []Comment `json:"comments"`
 	}
 
-	//create an instance of the struct and populate it with the post and comments
 	postWithComments := PostWithComments{
 		Post:     post,
 		Comments: allComments,
