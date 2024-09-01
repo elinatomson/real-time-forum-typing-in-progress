@@ -17,33 +17,34 @@ export function loadUserPage() {
     .then(user => {
       var contentContainer = document.createElement('div');
       var modifiedHTML = `
-      <header class="header" id="header">
+      <header id="header">
         <div class="name">Welcome ${user.nickname}!</div>
-        <div class="dropdown">
-          <button class="dropbtn">Menu</button>
-          <div class="dropdown-content">
-            <a id="newpost">New post</a>
-            <a id="logout-button">Log out</a>
+        <div class="header-container">
+          <div class="dropdown">
+            <button class="dropbtn">Menu</button>
+            <div class="dropdown-content">
+              <a id="newpost">New post</a>
+              <a id="logout-button">Log out</a>
+            </div>
+          </div>
+          <div class="heading">
+            <div id="mainpage">Fun Facts Forum</div>
           </div>
         </div>
-        <div class="heading">
-          <div id="mainpage">Fun Facts Forum</div>
-        </div>
       </header>
-      <div id="unread-messages" class="unread"></div>
       <div class="container">
         <div id="forum-users" class="forumusers">
+          <div id="unread-messages" class="unread"></div>
           <div class="post-list-title">Forum users:</div>
           <div id="user-list-container"></div>
         </div>
         <div id="formContainer" class="form-container">
+          <div class="title">Posts</div>
           <div id="postContainer"></div>
         </div>
       </div>
-      <footer class="footer">
-        <div>Authors:</div>
-        <a class="authors" href="https://01.kood.tech/git/elinat">elinat</a> <br>
-        <a class="authors" href="https://01.kood.tech/git/Anni.M">Anni.M</a>
+      <footer>
+        <p><span>&#169;</span>Copyright Elina Tomson</p>
       </footer>      
     `;
 

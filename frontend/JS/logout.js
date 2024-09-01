@@ -34,7 +34,7 @@ function loggingOut() {
 
 function showLoggedOutMessage() {
    var modifiedHTML = `
-   <header class="header">
+   <header>
      <div class="heading">
        <div id="mainpage">Fun Facts Forum</div>
      </div>
@@ -43,11 +43,9 @@ function showLoggedOutMessage() {
    <p class="align">
        <input id="main-page2" class="buttons" type="button" value="Back to main page">
    </p>
-   <footer class="footer">
-     <div>Authors:</div>
-     <a class="authors" href="https://01.kood.tech/git/elinat">elinat</a> <br>
-     <a class="authors" href="https://01.kood.tech/git/Anni.M">Anni.M</a>
-   </footer>
+    <footer>
+        <p><span>&#169;</span>Copyright Elina Tomson</p>
+    </footer>
  `;
 
     document.body.innerHTML = modifiedHTML; 

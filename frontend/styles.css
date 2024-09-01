@@ -1,42 +1,41 @@
-.body {
+body {
     background-color:  #3AAfA9;
     color: white;
     font-family: 'Gruppo', cursive;
 }
 
-.main{
+main{
   width: 100%;
   text-align: center;
 }
 
-.footer {
+footer {
     background-color:#2B7A78;
-    padding-left: 90%;
     margin-top: 100%;
+    text-align: center;
+    padding: 0.2%;
 }
 
-.authors {
-    font-size: 17px;
-    color: white;
-}
-
-.header {
+header {
     background-color:#2B7A78;
-    padding-bottom: 1%;
+    padding-bottom: 0.5%;
+    display: flex;
+    flex-direction: column;
 }
 
-.header1 {
-    text-align: right;
-    padding-right: 1%;
+.header-container {
+    display: flex;
+    justify-content: space-between; 
 }
 
 .heading {
     text-align: center;
     align-items: center;
-    font-size: 60px;
     color: white;
     text-decoration: none;
     cursor: pointer;
+    flex: 1;
+    font-size: clamp(40px, 5vw, 60px);
 }
 
 .heading2 {
@@ -49,8 +48,8 @@
 }
 
 .name {
-    font-size: 40px;
     margin-left: 1%;
+    font-size: clamp(20px, 5vw, 40px);
 }
 
 .buttons {
@@ -93,6 +92,11 @@ a {
     opacity: 0.7;
 }
 
+.title {
+    font-size: 40px;
+    text-align: center;
+}
+
 .posts{
     margin-top: 2%;
     border-color: #2B7A78;
@@ -118,7 +122,6 @@ a {
 .post{
     padding-top: 1%;
     padding-bottom: 1%;
-    border: 1px solid;
     width: 100%;
     cursor: pointer;
     overflow: auto;
@@ -145,7 +148,7 @@ a {
     min-width: 130px;
     color: white;
     padding: 5px;
-    font-size: 30px;
+    font-size: clamp(20px, 5vw, 30px);
     border: none;
     font-family: 'Gruppo', cursive;
     transition: 1s;
@@ -153,17 +156,14 @@ a {
 }
 
 .dropdown {
-    position: relative;
-    display: inline-block;
     padding: 1%;
 }
 
 .dropdown-content {
     display: none;
-    position: absolute;
+    position: relative;
     min-width: 130px;
-    z-index: 1;
-    font-size: 20px;
+    font-size: clamp(15px, 5vw, 20px);
     text-align: center;
     cursor: pointer;
 }
@@ -272,16 +272,13 @@ a {
 
 .form-container {
     flex: 1;
-    max-width: 500px;
-    margin-left: 26%;
+    margin-left: 2%;
     margin-top: 1%;
 }
 
 .forumusers {
     margin-top: 1%;
-    margin-left: 20px;
     margin-bottom: 2%;
-    border: 1px solid white;
     text-align: center;
 }
 
@@ -339,3 +336,8 @@ a {
   ::-webkit-scrollbar-thumb:hover {
     background-color: #17252A;
   }
+
+  span {
+    margin: 0.2rem;
+    content: "\00A9";
+}
