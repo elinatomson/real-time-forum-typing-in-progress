@@ -48,7 +48,7 @@ export function loadPostPage(postID) {
         formContainer.innerHTML = postHTML + commentsHTML + `
             <form id="commentform">
                 <p class="align">
-                    <textarea id="comment" class="input" cols="40" rows="5" wrap="hard" name="comment" placeholder="Comment" required></textarea>
+                    <textarea id="comment" class="input" cols="30" rows="5" wrap="hard" name="comment" placeholder="Comment" required></textarea>
                 </p>
                 <div class="align">
                     <button class="buttons" type="submit">Add comment</button>

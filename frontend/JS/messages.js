@@ -5,9 +5,9 @@ export function handleUserClick(user) {
   const formContainer = document.getElementById('formContainer');
   formContainer.innerHTML = `
   <div class="unread">Chat with ${user}</div>
-  <div>
+  <div class="align">
     <textarea class="messagebox" id="message-box" rows="10" cols="45" readonly></textarea>
-    <div class="align">
+    <div>
       <input type="text" id="message-input" class="input">
       <div id="typing-status"></div>
       <button class="buttons" id="send-button">Send</button>
